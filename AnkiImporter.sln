@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution files", "_Solution files", "{8CEC8B6F-4ACE-45F4-A7C9-FD5C34AEE20D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{94F5B8FD-2424-4302-95FC-BA8C81181424}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMemoAssistant.Plugins.AnkiImporter", "src\SuperMemoAssistant.Plugins.AnkiImporter\SuperMemoAssistant.Plugins.AnkiImporter.csproj", "{EFFD4F18-1394-435F-8113-E4B664FACEA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9F88C9C3-A20B-4AA6-B83E-E1919CE80E9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMemoAssistant.Plugins.AnkiImporter.Tests", "src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\SuperMemoAssistant.Plugins.AnkiImporter.Tests.csproj", "{430E49F0-33BE-4920-A476-2DB5234EBB36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		1. Alpha (Debug)|Any CPU = 1. Alpha (Debug)|Any CPU
+		1. Alpha (Debug)|x86 = 1. Alpha (Debug)|x86
+		2. Beta (Release)|Any CPU = 2. Beta (Release)|Any CPU
+		2. Beta (Release)|x86 = 2. Beta (Release)|x86
+		3. Stable (Release)|Any CPU = 3. Stable (Release)|Any CPU
+		3. Stable (Release)|x86 = 3. Stable (Release)|x86
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.1. Alpha (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.1. Alpha (Debug)|Any CPU.Build.0 = Debug|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.1. Alpha (Debug)|x86.ActiveCfg = Debug|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.1. Alpha (Debug)|x86.Build.0 = Debug|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.2. Beta (Release)|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.2. Beta (Release)|Any CPU.Build.0 = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.2. Beta (Release)|x86.ActiveCfg = Release|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.2. Beta (Release)|x86.Build.0 = Release|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.3. Stable (Release)|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.3. Stable (Release)|Any CPU.Build.0 = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.3. Stable (Release)|x86.ActiveCfg = Release|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.3. Stable (Release)|x86.Build.0 = Release|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Debug|x86.ActiveCfg = Debug|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Debug|x86.Build.0 = Debug|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Release|x86.ActiveCfg = Release|x86
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1}.Release|x86.Build.0 = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.1. Alpha (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.1. Alpha (Debug)|Any CPU.Build.0 = Debug|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.1. Alpha (Debug)|x86.ActiveCfg = Debug|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.1. Alpha (Debug)|x86.Build.0 = Debug|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.2. Beta (Release)|Any CPU.ActiveCfg = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.2. Beta (Release)|Any CPU.Build.0 = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.2. Beta (Release)|x86.ActiveCfg = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.2. Beta (Release)|x86.Build.0 = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.3. Stable (Release)|Any CPU.ActiveCfg = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.3. Stable (Release)|Any CPU.Build.0 = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.3. Stable (Release)|x86.ActiveCfg = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.3. Stable (Release)|x86.Build.0 = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Debug|x86.ActiveCfg = Debug|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Debug|x86.Build.0 = Debug|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Release|x86.ActiveCfg = Release|x86
+		{430E49F0-33BE-4920-A476-2DB5234EBB36}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EFFD4F18-1394-435F-8113-E4B664FACEA1} = {94F5B8FD-2424-4302-95FC-BA8C81181424}
+		{430E49F0-33BE-4920-A476-2DB5234EBB36} = {9F88C9C3-A20B-4AA6-B83E-E1919CE80E9E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77A4F8DF-088F-4AA9-A84D-7D1D7D673297}
+	EndGlobalSection
+EndGlobal
