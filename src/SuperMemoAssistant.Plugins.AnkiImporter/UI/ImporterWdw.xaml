@@ -6,8 +6,72 @@
         xmlns:local="clr-namespace:SuperMemoAssistant.Plugins.AnkiImporter.UI"
         xmlns:anki="clr-namespace:SuperMemoAssistant.Plugins.AnkiImporter"
         mc:Ignorable="d"
-        Title="ImporterWdw" Height="450" Width="800">
+        Title="Anki Deck Importer"
+        Height="450"
+        Width="800">
     <Grid>
-        
+    <Grid.RowDefinitions>
+      <RowDefinition></RowDefinition>
+      <RowDefinition Height="30"></RowDefinition>
+    </Grid.RowDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition></ColumnDefinition>
+        <ColumnDefinition></ColumnDefinition>
+        <ColumnDefinition></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+
+      <!-- Anki Deck Tree -->
+      <TreeView ItemsSource="{Binding Trees.Values}"
+                      Name="tv">
+        <TreeView.ItemTemplate>
+          <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
+            <StackPanel Orientation="Horizontal">
+              <CheckBox IsChecked="{Binding ToImport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  PreviewMouseDown="CheckBox_PreviewMouseDown"
+                                  Tag="{Binding}"/>
+              <TextBlock Text="{Binding Basename}" />
+              <TextBlock>
+                  Cards: <TextBlock Text="{Binding AllCards.Count}" />
+              </TextBlock>
+            </StackPanel>
+          </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
+
+      <!-- SM KT Preview -->
+      <TreeView ItemsSource="{Binding Trees.Filtered.Values}"
+                      Name="tv2"
+                      Grid.Column="1">
+        <TreeView.Resources>
+          <Style TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="True" />
+          </Style>
+        </TreeView.Resources>
+        <TreeView.ItemTemplate>
+          <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding Basename}" />
+              <TextBlock>
+                  Cards: <TextBlock Text="{Binding AllCards.Count}" />
+              </TextBlock>
+            </StackPanel>
+          </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
     </Grid>
+      
+    <!-- Anki Grouped Card Datagrid -->
+    
+      
+    <!-- Card Previewer -->
+      
+      
+    <!-- Buttons -->
+    <Button Grid.Row="1"
+                HorizontalAlignment="Right"
+                Content="Import"
+                Margin="5" Click="Button_Click">
+    </Button>
+  </Grid>
 </Window>

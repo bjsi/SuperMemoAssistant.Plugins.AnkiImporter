@@ -128,6 +128,55 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     public DeckConfig Config { get; set; }
 
     /// <summary>
+    /// Recursively set the ToImport value for decks in the hierarchy.
+    /// </summary>
+    /// <param name="ToImportValue">True if user wants to import else False</param>
+    public void RecursivelySetToImport(bool ToImportValue)
+    {
+      ToImport = ToImportValue;
+      if (ChildDecks != null && ChildDecks.Count > 0)
+      {
+        foreach (KeyValuePair<string, Deck> keyValuePair in ChildDecks)
+        {
+          var child = keyValuePair.Value;
+          child.RecursivelySetToImport(ToImportValue);
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Called recursively to get the first selected deck (the one closest to the root)
+    /// for the path between and including the current deck -> leaf decks
+    /// </summary>
+    /// <returns>The selected deck closest to the root or null if there are no selected decks</returns>
+    public Deck GetSelectedDeck()
+    {
+
+      Deck selectedDeck = null;
+
+      // If this deck is ToImport, return it
+      if (this.ToImport)
+      {
+        selectedDeck = this;
+      }
+      // Otherwise, recursively check child decks
+      else
+      {
+        if (this.ChildDecks == null || this.ChildDecks.Count == 0)
+          return selectedDeck;
+
+        foreach (KeyValuePair<string, Deck> childDeck in this.ChildDecks)
+        {
+          var deck = childDeck.Value;
+          selectedDeck = deck.GetSelectedDeck();
+        }
+      }
+
+      return selectedDeck;
+    }
+
+    /// <summary>
     /// Gets the level of the deck in the hierarchy. Zero-indexed: Root decks have level 0.
     /// Direct child of root has level 1.
     /// Returns -1 on invalid input.

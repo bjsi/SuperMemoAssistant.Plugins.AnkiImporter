@@ -27,86 +27,149 @@
 #endregion
 
 
-
-
 namespace SuperMemoAssistant.Plugins.AnkiImporter
 {
-    using System.Diagnostics.CodeAnalysis;
-    using SuperMemoAssistant.Services.Sentry;
+  using System.Diagnostics.CodeAnalysis;
+  using System.Windows.Input;
+  using SuperMemoAssistant.Services;
+  using SuperMemoAssistant.Services.IO.HotKeys;
+  using SuperMemoAssistant.Services.IO.Keyboard;
+  using SuperMemoAssistant.Services.Sentry;
+  using SuperMemoAssistant.Services.UI.Configuration;
+  using SuperMemoAssistant.Sys.IO.Devices;
+  using System.Collections.Generic;
+  using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+  using System.IO;
+  using System.Threading.Tasks;
+  using System.Windows;
+  using SuperMemoAssistant.Plugins.AnkiImporter.UI;
+  using SuperMemoAssistant.Extensions;
+  using Anotar.Serilog;
 
-    // ReSharper disable once UnusedMember.Global
-    // ReSharper disable once ClassNeverInstantiated.Global
-    [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
-    public class AnkiImporterPlugin : SentrySMAPluginBase<AnkiImporterPlugin>
+  // ReSharper disable once UnusedMember.Global
+  // ReSharper disable once ClassNeverInstantiated.Global
+  [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+  public class AnkiImporterPlugin : SentrySMAPluginBase<AnkiImporterPlugin>
+  {
+    #region Constructors
+
+    /// <inheritdoc />
+    public AnkiImporterPlugin() : base("Enter your Sentry.io api key (strongly recommended)") { }
+
+    #endregion
+
+
+
+
+    #region Properties Impl - Public
+
+    /// <inheritdoc />
+    public override string Name => "AnkiImporter";
+
+    /// <inheritdoc />
+    public override bool HasSettings => true;
+    public AnkiImporterCfg Config { get; set; }
+    public ImporterWdw CurrentInstance { get; set; }
+
+    #endregion
+
+
+    private void LoadConfig()
     {
-        #region Constructors
-
-        /// <inheritdoc />
-        public AnkiImporterPlugin() : base("Enter your Sentry.io api key (strongly recommended)") { }
-
-        #endregion
-
-
-
-
-        #region Properties Impl - Public
-
-        /// <inheritdoc />
-        public override string Name => "AnkiImporter";
-
-        /// <inheritdoc />
-        public override bool HasSettings => false;
-
-        #endregion
-
-
-
-
-        #region Methods Impl
-
-        /// <inheritdoc />
-        protected override void PluginInit()
-        {
-            // Insert code that needs to be run when the plugin is initialized.
-            // Typical initialization code consists of:
-            // - Registering keyboard hotkeys
-            // - Registering to be notified about events (e.g. OnElementChanged)
-            // - Initializing your own services
-            // - Publishing services for other plugins
-
-            // If you have questions or issues, you can:
-            // - Check our wiki for developer guides https://sma.supermemo.wiki/
-            // - Browse through our plugins' source code https://github.com/supermemo/
-            // - Ask for help on our Discord server https://discord.gg/vUQhqCT
-
-            // Uncomment to register an event handler which will be notified when the displayed element changes
-            // Svc.SM.UI.ElementWdw.OnElementChanged += new ActionProxy<SMDisplayedElementChangedEventArgs>(OnElementChanged);
-        }
-
-        // Set HasSettings to true, and uncomment this method to add your custom logic for settings
-        // /// <inheritdoc />
-        // public override void ShowSettings()
-        // {
-        // }
-
-        #endregion
-
-
-
-
-        #region Methods
-
-        // Uncomment to register an event handler for element changed events
-        // [LogToErrorOnException]
-        // public void OnElementChanged(SMDisplayedElementChangedEventArgs e)
-        // {
-        //   try
-        //   {
-        //     Insert your logic here
-        //   }
-        //   catch (RemotingException) { }
-        // }
-
-        #endregion
+      Config = Svc.Configuration.Load<AnkiImporterCfg>() ?? new AnkiImporterCfg();
     }
+
+
+    #region Methods Impl
+
+    /// <inheritdoc />
+    protected override void PluginInit()
+    {
+      LoadConfig();
+      Svc.HotKeyManager
+         .RegisterGlobal(
+           "AnkiImporter",
+           "Open AnkiImporter Window",
+           HotKeyScopes.SMBrowser,
+           new HotKey(Key.I, KeyModifiers.CtrlAltShift),
+           OpenAnkiImporter
+     );
+    }
+
+
+    /// <summary>
+    /// Get anki decks from an anki collection database.
+    /// </summary>
+    /// <returns></returns>
+    private async Task<Dictionary<long, Deck>> GetDecksAsync(string database)
+    {
+
+      var db = new DataAccess(database);
+      var decks = await db.GetDecksAsync();
+      return decks;
+
+    }
+
+    /// <summary>
+    /// Get Decks from the database and launch the importer window.
+    /// </summary>
+    private async void OpenAnkiImporter()
+    {
+
+      var database = Config.AnkiCollectionDB;
+
+      if (!File.Exists(database))
+      {
+        Popups.ShowAlert($"Anki database \"{database}\" does not exist", "Failed to open AnkiImporter window");
+        return;
+      }
+
+      var decks = await GetDecksAsync(database);
+      if (decks == null || decks.Count == 0)
+      {
+        Popups.ShowAlert($"Attempt to get decks from database \"{database}\"returned null or empty.", "Failed to open AnkiImporter window");
+        return;
+      }
+
+      var trees = new DeckTreeDictionary(decks);
+      OpenAnkiImporterWdw(trees);
+    }
+
+    /// <summary>
+    /// Open an AnkiImporterWdw instance.
+    /// </summary>
+    /// <param name="trees"></param>
+    private void OpenAnkiImporterWdw(DeckTreeDictionary trees)
+    {
+
+      if (trees == null || trees.Count == 0)
+      {
+        LogTo.Error("Attempted to OPenAnkiImporterWdw with a null or empty DeckTreeDictionary object");
+        return;
+      }
+
+      if (CurrentInstance != null)
+        return;
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        var wdw = new ImporterWdw(trees);
+        CurrentInstance = wdw;
+        wdw.ShowAndActivate();
+      });
+
+    }
+
+    /// <inheritdoc />
+    public override void ShowSettings()
+    {
+      ConfigurationWindow.ShowAndActivate(HotKeyManager.Instance, Config);
+    }
+
+    #endregion
+
+    #region Methods
+
+    #endregion
+  }
 }

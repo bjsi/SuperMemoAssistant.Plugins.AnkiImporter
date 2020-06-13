@@ -10,23 +10,8 @@ using System.Threading.Tasks;
 namespace SuperMemoAssistant.Plugins.AnkiImporter
 {
 
-  public class DeckTreeDictionary : Dictionary<string, Deck>, INotifyPropertyChanged
+  public class DeckTreeDictionary : ObservableDictionary<string, Deck> 
   {
-
-    // For XAML
-    private bool _ToImport { get; set; } = false;
-    public bool ToImport
-    {
-      get { return this._ToImport; }
-      set
-      {
-        if (value != this._ToImport)
-        {
-          this._ToImport = value;
-          NotifyPropertyChanged(nameof(ToImport));
-        }
-      }
-    }
 
     public DeckTreeDictionary(Dictionary<long, Deck> decks = null)
     {
@@ -53,6 +38,72 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
           }
           parentDeck.ChildDecks.Add(deck.Name, deck);
         }
+      }
+    }
+
+    public DeckTreeDictionary Filtered 
+    { 
+      get 
+      {
+        var filteredTrees = new DeckTreeDictionary();
+        foreach (KeyValuePair<string, Deck> keyValuePair in this)
+        {
+          var rootDeck = keyValuePair.Value;
+          var selectedDeck = rootDeck.GetSelectedDeck();
+          if (selectedDeck != null)
+            filteredTrees.Add(selectedDeck.Name, selectedDeck);
+        }
+        return filteredTrees;
+      }
+    }
+
+    /// <summary>
+    /// Returns true if an ancestor of the current deck in the deck tree has true for the ToImport property.
+    /// </summary>
+    public bool AncestorIsToImport(string parentName)
+    {
+
+      List<string> pathToParent = DeckNameEx.GetNamePath(parentName);
+      if (pathToParent != null && pathToParent.Count > 0)
+      {
+        var rootDeck = this[pathToParent[0]];
+        if (rootDeck.ToImport)
+          return true;
+
+        pathToParent.RemoveAt(0);
+        var currentDeck = rootDeck;
+        foreach (var deck in pathToParent)
+        {
+          if (currentDeck.ChildDecks[deck].ToImport)
+          {
+            return true;
+          }
+          currentDeck = currentDeck.ChildDecks[deck];
+        }
+      }
+
+      return false;
+
+    }
+
+    /// <summary>
+    /// Set the ToImportValue over a range of decks.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="ToImportValue"></param>
+    public void SetToImportOverRange(List<string> path, bool ToImportValue)
+    {
+      if (path == null || path.Count == 0)
+        return;
+
+      Deck root = this[path[0]];
+      root.ToImport = ToImportValue;
+      path.RemoveAt(0);
+      var currentPathValue = root;
+      foreach (var node in path)
+      {
+        currentPathValue.ChildDecks[node].ToImport = ToImportValue;
+        currentPathValue = currentPathValue.ChildDecks[node];
       }
     }
 
@@ -102,15 +153,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
         target = cur;
       }
       return target;
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    private void NotifyPropertyChanged(string propertyName)
-    {
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-      }
     }
   }
 }
