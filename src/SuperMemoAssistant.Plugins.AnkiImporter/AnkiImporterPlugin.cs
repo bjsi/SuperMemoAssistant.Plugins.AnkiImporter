@@ -71,7 +71,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     public AnkiImporterCfg Config { get; set; }
     public ImporterWdw CurrentInstance { get; set; }
     public string TestAnkiCollectionDB { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
-    public string AnkiCollectionMediaDir { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.media\";
+    public string TestAnkiCollectionMediaDir { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.media\";
 
     #endregion
 
@@ -82,7 +82,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
       if (Config.Testing)
       {
-        Config.AnkiCollectionDB = "";
+        Config.AnkiCollectionDB = TestAnkiCollectionDB;
+        Config.AnkiCollectionMediaDir = TestAnkiCollectionMediaDir;
       }
     }
 

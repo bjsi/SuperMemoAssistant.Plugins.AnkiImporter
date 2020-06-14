@@ -9,13 +9,29 @@
         Title="Anki Deck Importer"
         Height="450"
         Width="800">
-    <Grid>
+  <Window.Resources>
+    
+    <!-- The cards for the Datagrid -->
+    <local:Cards x:Key="cards" />
+    <CollectionViewSource x:Key="cvsCards"
+                          Source="{StaticResource cards}">
+      <CollectionViewSource.GroupDescriptions>
+        <PropertyGroupDescription PropertyName="Type"/>
+        <!-- TODO: Sort by DeckName -->
+        <!-- TODO: Sort by NoteType -->
+      </CollectionViewSource.GroupDescriptions>
+    </CollectionViewSource>
+    
+  </Window.Resources>
+  
+  <Grid>
     <Grid.RowDefinitions>
       <RowDefinition></RowDefinition>
       <RowDefinition Height="30"></RowDefinition>
     </Grid.RowDefinitions>
     <Grid>
       <Grid.ColumnDefinitions>
+        <ColumnDefinition></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
@@ -59,10 +75,78 @@
           </HierarchicalDataTemplate>
         </TreeView.ItemTemplate>
       </TreeView>
-    </Grid>
       
     <!-- Anki Grouped Card Datagrid -->
-    
+    <DataGrid AutoGenerateColumns="False"
+              Margin="5"
+              ItemsSource="{Binding Source={StaticResource cvsCards}}"
+              CanUserAddRows="False"
+              Grid.Column="2"
+              Name="DG1">
+      <DataGrid.GroupStyle>
+        <!-- Style for groups at top level. -->
+        <GroupStyle>
+          <GroupStyle.ContainerStyle>
+            <Style TargetType="{x:Type GroupItem}">
+              <Setter Property="Margin" Value="0,0,0,5"/>
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="{x:Type GroupItem}">
+                    <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
+                      <Expander.Header>
+                        <DockPanel>
+                          <TextBlock Text="Language:" Margin="3" FontWeight="Bold"></TextBlock>
+                          <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="100"/>
+                          <TextBlock Text="Language:" Margin="3" FontWeight="Bold"></TextBlock>
+                          <TextBlock FontWeight="Bold" Margin="3" Text="{Binding Path=ItemCount}"/>
+                        </DockPanel>
+                      </Expander.Header>
+                      <Expander.Content>
+                        <ItemsPresenter />
+                      </Expander.Content>
+                    </Expander>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </GroupStyle.ContainerStyle>
+        </GroupStyle>
+        <!-- Style for groups under the top level. -->
+        <GroupStyle>
+          <GroupStyle.HeaderTemplate>
+            <DataTemplate>
+              <DockPanel Background="LightBlue">
+                <TextBlock Text="Project:"
+                           FontWeight="Bold"
+                           Margin="3">
+                </TextBlock>
+                <TextBlock Text="{Binding Path=Name}"
+                           Foreground="Blue"
+                           Margin="3"/>
+                <TextBlock Text="Count:"
+                           FontWeight="Bold"
+                           Margin="3">
+                </TextBlock>
+                <TextBlock Text="{Binding Path=ItemCount}"
+                           Foreground="Blue"
+                           Margin="3"/>
+              </DockPanel>
+            </DataTemplate>
+          </GroupStyle.HeaderTemplate>
+        </GroupStyle>
+      </DataGrid.GroupStyle>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Id"
+                            Binding="{Binding Id}">
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Card Type"
+                            Binding="{Binding CardType}">
+        </DataGridTextColumn>
+        <!-- TODO: What else to add -->
+      </DataGrid.Columns>
+    </DataGrid>
+
+    </Grid>
       
     <!-- Card Previewer -->
       

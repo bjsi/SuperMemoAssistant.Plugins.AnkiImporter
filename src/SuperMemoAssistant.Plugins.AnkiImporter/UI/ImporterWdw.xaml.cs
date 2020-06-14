@@ -2,6 +2,7 @@
 using SuperMemoAssistant.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,14 @@ using System.Windows.Shapes;
 
 namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 {
+
+  /// <summary>
+  /// Special collection class for the collection view source
+  /// </summary>
+  public class Cards : ObservableCollection<Card>
+  {
+  }
+
   /// <summary>
   /// Interaction logic for ImporterWdw.xaml
   /// </summary>
@@ -39,6 +48,28 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
     private void RefreshSMKT()
     {
       tv2.ItemsSource = Trees.Filtered.Values;
+    }
+
+    private void RefreshDeckGrid()
+    {
+
+      Cards DataGridCards = (Cards)this.Resources["extracts"];
+      var selectedDecks = Trees.Filtered.Values;
+      if (selectedDecks == null || selectedDecks.Count == 0)
+        return;
+
+      // get selected cards
+      var selectedCards = new List<Card>();
+      foreach (var deck in selectedDecks)
+      {
+        selectedCards.AddRange(deck.AllCards);
+      }
+
+      // Add each selected card to the datagrid collection
+      foreach (var card in selectedCards)
+      {
+        DataGridCards.Add(card);
+      }
     }
 
     /// <summary>
@@ -72,6 +103,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
       }
 
       RefreshSMKT();
+      RefreshDeckGrid();
       e.Handled = true;
     }
 
