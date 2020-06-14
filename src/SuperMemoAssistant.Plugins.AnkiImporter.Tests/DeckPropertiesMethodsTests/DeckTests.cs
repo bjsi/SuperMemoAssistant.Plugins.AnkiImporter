@@ -67,5 +67,47 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests.DeckPropertiesMethodsTes
       actual = DeckNameEx.GetNamePath(name);
       Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void GetNamePathNullReturnsNull()
+    {
+      string name = null;
+      var output = DeckNameEx.GetNamePath(name);
+      Assert.Null(output);
+    }
+
+    [Fact]
+    public void GetSelectedDeckReturnsDeck()
+    {
+
+      var parent = new Deck() { Name = "parent", ToImport = false };
+      var child = new Deck() { Name = "parent::child", ToImport = true };
+      parent.ChildDecks.Add(child.Name, child);
+      Assert.Equal(child, parent.GetSelectedDeck());
+
+      parent = new Deck() { Name = "parent", ToImport = false };
+      child = new Deck() { Name = "parent::child", ToImport = false };
+      parent.ChildDecks.Add(child.Name, child);
+
+      Assert.Null(parent.GetSelectedDeck());
+
+    }
+
+    [Fact]
+    public void RecursivelySetToImportSetsToImport()
+    {
+      var parent = new Deck() { Name = "parent", ToImport = false };
+      var child = new Deck() { Name = "parent::child", ToImport = false };
+      parent.ChildDecks.Add(child.Name, child);
+      parent.RecursivelySetToImport(true);
+      Assert.True(parent.ToImport);
+      Assert.True(child.ToImport);
+
+      parent.RecursivelySetToImport(false);
+      Assert.False(parent.ToImport);
+      Assert.False(child.ToImport);
+
+    }
+
   }
 }

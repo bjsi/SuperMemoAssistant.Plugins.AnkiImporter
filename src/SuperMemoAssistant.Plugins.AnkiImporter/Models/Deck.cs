@@ -23,6 +23,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
     public static List<string> GetNamePath(string name)
     {
+      if (string.IsNullOrEmpty(name))
+        return null;
+
       var path = new List<string>();
       List<string> nameSplit = name.Split(new string[] { "::" }, StringSplitOptions.None).ToList();
       for (int i = 0; i <= Level(name); i++)

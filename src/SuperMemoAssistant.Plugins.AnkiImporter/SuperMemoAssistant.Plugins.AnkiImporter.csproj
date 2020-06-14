@@ -66,6 +66,7 @@
     <PackageReference Include="SuperMemoAssistant.Services.Sentry">
       <Version>2.0.5-alpha.2</Version>
     </PackageReference>
+    <PackageReference Include="SuperMemoAssistant.Services.UI" Version="2.0.4.6" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.1" />
   </ItemGroup>
   <Target Name="CopyOutput" AfterTargets="Build">

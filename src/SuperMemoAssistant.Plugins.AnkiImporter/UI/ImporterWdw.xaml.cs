@@ -74,5 +74,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
       RefreshSMKT();
       e.Handled = true;
     }
+
+    private void ImportBtn_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
   }
 }

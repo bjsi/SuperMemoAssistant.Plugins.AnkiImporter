@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 namespace SuperMemoAssistant.Plugins.AnkiImporter
 {
 
+  /// <summary>
+  /// TODO: Document in detail
+  /// </summary>
   public class DeckTreeDictionary : ObservableDictionary<string, Deck> 
   {
 
@@ -58,7 +61,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     }
 
     /// <summary>
-    /// Returns true if an ancestor of the current deck in the deck tree has true for the ToImport property.
+    /// Returns true if an ancestor between the root and the parentName has true for the ToImport property.
     /// </summary>
     public bool AncestorIsToImport(string parentName)
     {
@@ -111,9 +114,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     /// Sorts a list of decks by deck level
     /// </summary>
     /// <param name="decks"></param>
-    private static void SortByLevel(List<Deck> decks)
+    public static void SortByLevel(List<Deck> decks)
     {
-      decks.Sort((x, y) => (x.Level).CompareTo(y.Level));
+      decks?.Sort((x, y) => (x.Level).CompareTo(y.Level));
     }
 
     /// <summary>

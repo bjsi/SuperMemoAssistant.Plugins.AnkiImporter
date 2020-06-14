@@ -70,6 +70,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     public override bool HasSettings => true;
     public AnkiImporterCfg Config { get; set; }
     public ImporterWdw CurrentInstance { get; set; }
+    public string TestAnkiCollectionDB { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    public string AnkiCollectionMediaDir { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.media\";
 
     #endregion
 
@@ -77,6 +79,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     private void LoadConfig()
     {
       Config = Svc.Configuration.Load<AnkiImporterCfg>() ?? new AnkiImporterCfg();
+
+      if (Config.Testing)
+      {
+        Config.AnkiCollectionDB = "";
+      }
     }
 
 
@@ -103,11 +110,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     /// <returns></returns>
     private async Task<Dictionary<long, Deck>> GetDecksAsync(string database)
     {
-
       var db = new DataAccess(database);
       var decks = await db.GetDecksAsync();
       return decks;
-
     }
 
     /// <summary>

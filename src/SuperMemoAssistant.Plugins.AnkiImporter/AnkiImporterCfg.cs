@@ -26,8 +26,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
   public class AnkiImporterCfg : CfgBase<AnkiImporterCfg>, INotifyPropertyChangedEx
   {
 
+    [Field(Name = "Testing?")]
+    public bool Testing { get; set; } = true;
+
     [Field(Name = "Anki collection database")]
     public string AnkiCollectionDB { get; set; }
+
+    [Field(Name = "Anki Collection Media Directory")]
+    public string AnkiCollectionMediaDir { get; set; }
 
     [JsonIgnore]
     public bool IsChanged { get; set; }
