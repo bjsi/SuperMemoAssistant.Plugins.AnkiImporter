@@ -18,6 +18,23 @@ using System.Windows.Shapes;
 namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 {
 
+  public class DeckBaseNameSelector : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      if (value is Card)
+      {
+        return (value as Card).Deck.Basename;
+      }
+      return "Error: value is not of type Deck";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
   /// <summary>
   /// Special collection class for the collection view source
   /// </summary>
@@ -53,7 +70,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
     private void RefreshDeckGrid()
     {
 
-      Cards DataGridCards = (Cards)this.Resources["extracts"];
+      Cards DataGridCards = (Cards)this.Resources["cards"];
+      DataGridCards.Clear();
       var selectedDecks = Trees.Filtered.Values;
       if (selectedDecks == null || selectedDecks.Count == 0)
         return;

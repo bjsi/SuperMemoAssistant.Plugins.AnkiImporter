@@ -12,7 +12,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
   public class NoteTypeTests
   {
 
-    public string file = @"C:\Users\james\Desktop\Anki\temp\User 1\collection.anki2";
+    public string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
 
     [Theory]
     [InlineData(1518831358666)]

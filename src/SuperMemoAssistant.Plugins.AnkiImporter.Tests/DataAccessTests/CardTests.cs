@@ -37,7 +37,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
 {
   public class CardTests
   {
-    public string file = @"C:\Users\james\Desktop\Anki\temp\User 1\collection.anki2";
+    public string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+
 
     [Fact]
     public async void GetCardsReturnsCards()
@@ -45,7 +46,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
 
       var db = new DataAccess(file);
       var cards = await db.GetCardsAsync();
-      Assert.True(cards != null && cards.Count() > 0);
+      Assert.True(cards != null && cards.Count() == 456);
 
     }
 
@@ -88,6 +89,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Expression<Func<Card, bool>> filter = (c) => c.Id == id;
       var results = await db.GetCardsAsync(filter);
       var card = results[0];
+
       Assert.NotNull(card.Note);
       Assert.Equal(card.NoteId, card.Note.Id);
 

@@ -86,6 +86,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
           List<Collection> cols = await db.SelectAsync<Collection>();
           Collection col = cols?.FirstOrDefault();
+          // TODO: What if col is null?
           var deckConfigs = GetDeckConfigsObject(col.DeckConfigs);
           var results = GetDecksObject(col.Decks);
           if (filter != null)
@@ -93,13 +94,15 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
           if (results != null && results.Count > 0)
           {
-            foreach (var deck in results)
+            foreach (KeyValuePair<long, Deck> kvPair in results)
             {
 
-              List<Card> cards = new List<Card>();
-              var config = GetDeckConfig(deckConfigs, deck.Key);
-              deck.Value.Config = config;
-              deck.Value.Cards = await GetCardsAsync(x => x.DeckId == deck.Key);
+              var deck = kvPair.Value;
+              var config = GetDeckConfig(deckConfigs, deck.Id);
+              deck.Config = config;
+              var cards = await GetCardsAsync(x => x.DeckId == deck.Id);
+              cards?.ForEach(c => c.Deck = deck);
+              deck.Cards = cards;
 
             }
             decks = results;
@@ -180,6 +183,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
           noteTypes = GetNoteTypesObject(col?.NoteTypes);
 
         }
+
       }
       catch (Exception e)
       {

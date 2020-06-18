@@ -13,11 +13,13 @@
     
     <!-- The cards for the Datagrid -->
     <local:Cards x:Key="cards" />
+    <local:DeckBaseNameSelector x:Key="DeckBaseNameSelector"/>
     <CollectionViewSource x:Key="cvsCards"
                           Source="{StaticResource cards}">
       <CollectionViewSource.GroupDescriptions>
-        <PropertyGroupDescription PropertyName="Type"/>
-        <!-- TODO: Sort by DeckName -->
+        <PropertyGroupDescription PropertyName="."
+                                  Converter="{StaticResource DeckBaseNameSelector}"
+                                  />
         <!-- TODO: Sort by NoteType -->
       </CollectionViewSource.GroupDescriptions>
     </CollectionViewSource>
@@ -95,9 +97,9 @@
                     <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
                       <Expander.Header>
                         <DockPanel>
-                          <TextBlock Text="Language:" Margin="3" FontWeight="Bold"></TextBlock>
+                          <TextBlock Text="Deck:" Margin="3" FontWeight="Bold"></TextBlock>
                           <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="100"/>
-                          <TextBlock Text="Language:" Margin="3" FontWeight="Bold"></TextBlock>
+                          <TextBlock Text="Cards" Margin="3" FontWeight="Bold"></TextBlock>
                           <TextBlock FontWeight="Bold" Margin="3" Text="{Binding Path=ItemCount}"/>
                         </DockPanel>
                       </Expander.Header>
@@ -136,13 +138,29 @@
         </GroupStyle>
       </DataGrid.GroupStyle>
       <DataGrid.Columns>
-        <DataGridTextColumn Header="Id"
-                            Binding="{Binding Id}">
-        </DataGridTextColumn>
-        <DataGridTextColumn Header="Card Type"
-                            Binding="{Binding CardType}">
-        </DataGridTextColumn>
-        <!-- TODO: What else to add -->
+        
+        <!-- Card Id Column -->
+          <DataGridTemplateColumn Header="Id">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Id}"
+                           Foreground="Black">
+                </TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        
+        <!-- Card Fields Column -->
+          <DataGridTemplateColumn Header="Fields">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Card.Note.FieldString}"
+                           Foreground="Black">
+                </TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        
       </DataGrid.Columns>
     </DataGrid>
 

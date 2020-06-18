@@ -93,7 +93,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     /// <inheritdoc />
     protected override void PluginInit()
     {
+
       LoadConfig();
+
       Svc.HotKeyManager
          .RegisterGlobal(
            "AnkiImporter",
@@ -102,6 +104,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
            new HotKey(Key.I, KeyModifiers.CtrlAltShift),
            OpenAnkiImporter
      );
+
     }
 
 

@@ -92,8 +92,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     }
 
     // Relationships
+
     [Reference]
     public Note Note { get; set; }
+
+    public Deck Deck { get; set; }
 
   }
 }

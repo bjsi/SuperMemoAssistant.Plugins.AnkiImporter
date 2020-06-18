@@ -49,11 +49,15 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
     public static string Basename(string name)
     {
+      if (string.IsNullOrEmpty(name))
+        return null;
       return name?.Split(new string[] { "::" }, StringSplitOptions.None)?.Last();
     }
 
     public static int Level(string name) 
     {
+      if (string.IsNullOrEmpty(name))
+        return -1;
       return name?.Split(new string[] { "::" }, StringSplitOptions.None)?.Length - 1 ?? -1;
     }
   }
@@ -173,6 +177,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
         {
           var deck = childDeck.Value;
           selectedDeck = deck.GetSelectedDeck();
+          if (selectedDeck != null)
+            break;
         }
       }
 
@@ -193,18 +199,34 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
     /// <summary>
     /// Get all child deck cards recursively, beginning at and including the current deck.
+    /// TODO: Refactor these two methods into one?
     /// </summary>
     public List<Card> AllCards 
     {
       get
       {
-        List<Card> allCards = Cards;
-        foreach (var child in ChildDecks.Values.ToList())
+        List<Card> allCards = new List<Card>();
+        allCards.AddRange(Cards);
+        foreach (KeyValuePair<string, Deck> keyValuePair in ChildDecks)
         {
-          allCards.AddRange(child.AllCards);
+          var deck = keyValuePair.Value;
+          allCards.AddRange(deck.RecursivelyGetCards());
         }
         return allCards;
       }
+    }
+
+    private List<Card> RecursivelyGetCards()
+    {
+
+      List<Card> ret = new List<Card>();
+      ret.AddRange(Cards);
+      foreach(KeyValuePair<string, Deck> keyValuePair in ChildDecks)
+      {
+        var deck = keyValuePair.Value;
+        ret.AddRange(deck.RecursivelyGetCards());
+      }
+      return ret;
     }
 
     /// <summary>
