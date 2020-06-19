@@ -50,7 +50,7 @@
                                   Tag="{Binding}"/>
               <TextBlock Text="{Binding Basename}" />
               <TextBlock>
-                  Cards: <TextBlock Text="{Binding AllCards.Count}" />
+                  (<TextBlock Text="{Binding AllCards.Count}"/>)
               </TextBlock>
             </StackPanel>
           </HierarchicalDataTemplate>
@@ -98,7 +98,7 @@
                       <Expander.Header>
                         <DockPanel>
                           <TextBlock Text="Deck:" Margin="3" FontWeight="Bold"></TextBlock>
-                          <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="100"/>
+                          <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="50"/>
                           <TextBlock Text="Cards" Margin="3" FontWeight="Bold"></TextBlock>
                           <TextBlock FontWeight="Bold" Margin="3" Text="{Binding Path=ItemCount}"/>
                         </DockPanel>
@@ -154,19 +154,16 @@
           <DataGridTemplateColumn Header="Fields">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding Card.Note.FieldString}"
+                <TextBlock Text="{Binding Note.FieldString}"
                            Foreground="Black">
                 </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-        
       </DataGrid.Columns>
     </DataGrid>
-
+    
     </Grid>
-      
-    <!-- Card Previewer -->
       
       
     <!-- Buttons -->

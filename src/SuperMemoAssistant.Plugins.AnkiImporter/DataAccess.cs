@@ -85,10 +85,17 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
         {
 
           List<Collection> cols = await db.SelectAsync<Collection>();
+
           Collection col = cols?.FirstOrDefault();
-          // TODO: What if col is null?
+          if (col == null)
+          {
+            LogTo.Debug("Failed to GetDecksAsync because collection was null");
+            return decks;
+          }
+
           var deckConfigs = GetDeckConfigsObject(col.DeckConfigs);
           var results = GetDecksObject(col.Decks);
+
           if (filter != null)
             results = results.Where(x => filter(x)).ToDictionary(x => x.Key, x => x.Value);
 
@@ -216,6 +223,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
           else
             cards = await db.LoadSelectAsync<Card>(x => true);
 
+          // Doesn't come with NoteTypes so need to add them on
+          var noteTypes = await GetNoteTypesAsync();
+          foreach (var card in cards)
+          {
+            NoteType noteType = null;
+            noteTypes.TryGetValue(card.Note.NoteTypeId, out noteType);
+            card.Note.NoteType = noteType;
+          }
         }
       }
       catch (Exception e)

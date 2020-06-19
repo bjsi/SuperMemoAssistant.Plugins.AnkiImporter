@@ -38,19 +38,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [Alias("flags")]
     public int Flags { get; set; }
 
-    private Dictionary<string, string> _fields { get; set; }
     public Dictionary<string, string> Fields 
     { get
       {
-        if (_fields == null)
-        {
-          var fieldContentMap = new Dictionary<string, string>();
-          var values = FieldString.Split('\x1f');
-          var keys = NoteType.Fields;
-          keys.ForEach(k => fieldContentMap.Add(k.Name, values[k.Ordinal]));
-          _fields = fieldContentMap;
-        }
-        return _fields;
+        var fieldContentMap = new Dictionary<string, string>();
+        var values = FieldString.Split('\x1f');
+        var keys = NoteType.Fields;
+        keys.ForEach(k => fieldContentMap.Add(k.Name, values[k.Ordinal]));
+        return fieldContentMap;
       }
     }
 

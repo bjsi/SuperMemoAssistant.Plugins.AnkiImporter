@@ -94,5 +94,47 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Assert.Equal(card.NoteId, card.Note.Id);
 
     }
+
+    [Fact]
+    public async void GetCardsNoteNoteTypeNotNull()
+    {
+
+      var db = new DataAccess(file);
+      var cards = await db.GetCardsAsync();
+
+      foreach (var card in cards)
+      {
+        Assert.NotNull(card.Note.NoteType);
+      }
+
+    }
+
+    [Fact]
+    public async void GetCardsNoteFieldsNotNull()
+    {
+
+      var db = new DataAccess(file);
+      var cards = await db.GetCardsAsync();
+
+      foreach (var card in cards)
+      {
+        Assert.NotNull(card.Note.Fields);
+      }
+    }
+
+    [Fact]
+    public async void GetCardsCardTypeCorrect()
+    {
+
+      var db = new DataAccess(file);
+      var cards = await db.GetCardsAsync();
+
+      foreach (var card in cards)
+      {
+        // All cards in the Piano Basics collection are normal
+        // TODO: Need to add cloze tests
+        Assert.Equal(card.CardType, CardType.Normal);
+      }
+    }
   }
 }

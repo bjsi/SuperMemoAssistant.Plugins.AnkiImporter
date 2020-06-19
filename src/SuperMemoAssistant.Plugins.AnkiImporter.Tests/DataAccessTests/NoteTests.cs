@@ -60,17 +60,18 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     }
 
     // TODO: Improve this test
-    [Theory]
-    [InlineData(1518852959151)]
-    public async void NoteFieldsAreCorrect(long id)
+    [Fact]
+    public async void NoteFieldsNotNull()
     {
 
       var db = new DataAccess(file);
-      Expression<Func<Note, bool>> filter = (c) => c.Id == id;
-      var notes = await db.GetNotesAsync(filter);
-      var note = notes?.FirstOrDefault();
-      var fields = note.Fields;
-      Assert.NotNull(fields);
+      var notes = await db.GetNotesAsync();
+
+      foreach (var note in notes)
+      {
+        var fields = note.Fields;
+        Assert.NotNull(fields);
+      }
     }
   }
 }
