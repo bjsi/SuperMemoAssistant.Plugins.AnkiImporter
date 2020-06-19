@@ -8,24 +8,24 @@
         mc:Ignorable="d"
         Title="Anki Deck Importer"
         Height="450"
-        Width="800">
+        Width="900">
   <Window.Resources>
     
     <!-- The cards for the Datagrid -->
     <local:Cards x:Key="cards" />
     <local:DeckBaseNameSelector x:Key="DeckBaseNameSelector"/>
+    <local:CardTemplateSelector x:Key="CardTemplateSelector"/>
     <CollectionViewSource x:Key="cvsCards"
                           Source="{StaticResource cards}">
       <CollectionViewSource.GroupDescriptions>
         <PropertyGroupDescription PropertyName="."
-                                  Converter="{StaticResource DeckBaseNameSelector}"
-                                  />
-        <!-- TODO: Sort by NoteType -->
+                                  Converter="{StaticResource DeckBaseNameSelector}"/>
+        <PropertyGroupDescription PropertyName="."
+                                  Converter="{StaticResource CardTemplateSelector}"/>
       </CollectionViewSource.GroupDescriptions>
     </CollectionViewSource>
     
   </Window.Resources>
-  
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition></RowDefinition>
@@ -35,21 +35,24 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
-        <ColumnDefinition></ColumnDefinition>
+        <ColumnDefinition Width="2*"></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
       </Grid.ColumnDefinitions>
 
       <!-- Anki Deck Tree -->
       <TreeView ItemsSource="{Binding Trees.Values}"
-                      Name="tv">
+                Name="tv"
+                Margin="5">
         <TreeView.ItemTemplate>
           <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
             <StackPanel Orientation="Horizontal">
               <CheckBox IsChecked="{Binding ToImport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   PreviewMouseDown="CheckBox_PreviewMouseDown"
-                                  Tag="{Binding}"/>
-              <TextBlock Text="{Binding Basename}" />
-              <TextBlock>
+                                  Tag="{Binding}"
+                                  Margin="2"/>
+              <TextBlock Text="{Binding Basename}"
+                         Margin="2"/>
+              <TextBlock Margin="2">
                   (<TextBlock Text="{Binding AllCards.Count}"/>)
               </TextBlock>
             </StackPanel>
@@ -59,8 +62,9 @@
 
       <!-- SM KT Preview -->
       <TreeView ItemsSource="{Binding Trees.Filtered.Values}"
-                      Name="tv2"
-                      Grid.Column="1">
+                Name="tv2"
+                Grid.Column="1"
+                Margin="5">
         <TreeView.Resources>
           <Style TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="True" />
@@ -69,9 +73,11 @@
         <TreeView.ItemTemplate>
           <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
             <StackPanel Orientation="Horizontal">
-              <TextBlock Text="{Binding Basename}" />
-              <TextBlock>
-                  Cards: <TextBlock Text="{Binding AllCards.Count}" />
+              <Image  />
+              <TextBlock Text="{Binding Basename}"
+                         Margin="2"/>
+              <TextBlock Margin="2">
+                  (<TextBlock Text="{Binding AllCards.Count}" />)
               </TextBlock>
             </StackPanel>
           </HierarchicalDataTemplate>
@@ -98,7 +104,7 @@
                       <Expander.Header>
                         <DockPanel>
                           <TextBlock Text="Deck:" Margin="3" FontWeight="Bold"></TextBlock>
-                          <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="50"/>
+                          <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="3" Width="100"/>
                           <TextBlock Text="Cards" Margin="3" FontWeight="Bold"></TextBlock>
                           <TextBlock FontWeight="Bold" Margin="3" Text="{Binding Path=ItemCount}"/>
                         </DockPanel>
@@ -118,14 +124,14 @@
           <GroupStyle.HeaderTemplate>
             <DataTemplate>
               <DockPanel Background="LightBlue">
-                <TextBlock Text="Project:"
+                <TextBlock Text="Template:"
                            FontWeight="Bold"
                            Margin="3">
                 </TextBlock>
                 <TextBlock Text="{Binding Path=Name}"
                            Foreground="Blue"
                            Margin="3"/>
-                <TextBlock Text="Count:"
+                <TextBlock Text="Cards:"
                            FontWeight="Bold"
                            Margin="3">
                 </TextBlock>
