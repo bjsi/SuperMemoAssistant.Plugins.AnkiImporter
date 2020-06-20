@@ -1,5 +1,6 @@
 ﻿using Anotar.Serilog;
 using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
       var Decks = decks.Values.ToList();
 
       SortByLevel(Decks);
+
       foreach (var deck in Decks)
       {
         if (deck.IsRoot)
@@ -63,7 +65,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     /// <summary>
     /// Returns true if an ancestor between the root and the parentName has true for the ToImport property.
     /// </summary>
-    public bool AncestorIsToImport(string parentName)
+    public bool AncestorToImportIsTrue(string parentName)
     {
 
       List<string> pathToParent = DeckNameEx.GetNamePath(parentName);

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using ServiceStack.OrmLite;
 using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,7 +68,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
     //
     // Decks
-
     public async Task<Dictionary<long, Deck>> GetDecksAsync(Func<KeyValuePair<long, Deck>, bool> filter = null)
     {
 

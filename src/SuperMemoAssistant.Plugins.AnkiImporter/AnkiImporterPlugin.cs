@@ -45,6 +45,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
   using SuperMemoAssistant.Plugins.AnkiImporter.UI;
   using SuperMemoAssistant.Extensions;
   using Anotar.Serilog;
+  using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 
   // ReSharper disable once UnusedMember.Global
   // ReSharper disable once ClassNeverInstantiated.Global
@@ -80,6 +81,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     {
       Config = Svc.Configuration.Load<AnkiImporterCfg>() ?? new AnkiImporterCfg();
 
+      // TODO: Fix this
       if (Config.Testing)
       {
         Config.AnkiCollectionDB = TestAnkiCollectionDB;
@@ -106,7 +108,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
      );
 
     }
-
 
     /// <summary>
     /// Get anki decks from an anki collection database.
@@ -153,7 +154,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
       if (trees == null || trees.Count == 0)
       {
-        LogTo.Error("Attempted to OPenAnkiImporterWdw with a null or empty DeckTreeDictionary object");
+        LogTo.Error("Attempted to OpenAnkiImporterWdw with a null or empty DeckTreeDictionary object");
         return;
       }
 

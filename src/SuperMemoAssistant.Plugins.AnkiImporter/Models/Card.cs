@@ -1,4 +1,5 @@
 ﻿using ServiceStack.DataAnnotations;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

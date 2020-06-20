@@ -6,7 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
-{
+{ 
+
+  /// <summary>
+  /// Represents an Anki Collection
+  /// </summary>
   [Alias("col")]
   public class Collection
   {

@@ -1,4 +1,5 @@
 ﻿using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 using SuperMemoAssistant.Services;
 using System;
 using System.Collections.Generic;
@@ -125,7 +126,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 
       if (checkBox.IsChecked == true)
       {
-        if (Trees.AncestorIsToImport(deck.Parentname))
+        if (Trees.AncestorToImportIsTrue(deck.Parentname))
         {
           // Uncheck from this deck's root until this deck's parent
           Trees.SetToImportOverRange(pathToParent, false);

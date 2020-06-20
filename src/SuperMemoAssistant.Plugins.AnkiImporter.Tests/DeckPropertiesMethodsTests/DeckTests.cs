@@ -1,4 +1,5 @@
 ﻿using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests.DeckPropertiesMethodsTes
     [Theory]
     [InlineData("parent::child::grandchild", "grandchild")]
     [InlineData("parent", "parent")]
-    // TODO:
     [InlineData("", null)]
     [InlineData(null, null)]
     public void BasenameReturnsBasename(string name, string expected)

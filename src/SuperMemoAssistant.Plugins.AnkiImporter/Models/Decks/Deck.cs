@@ -7,61 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
+namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
 {
 
   /// <summary>
-  /// Some extension methods for dealing with deck names
-  /// Useful for searching deck tree.
+  /// Represents an Anki Deck.
+  /// TODO: Consider 
   /// </summary>
-  public static class DeckNameEx
-  {
-    public static bool IsRoot(string name)
-    {
-      return !name.Contains("::");
-    }
-
-    public static List<string> GetNamePath(string name)
-    {
-      if (string.IsNullOrEmpty(name))
-        return null;
-
-      var path = new List<string>();
-      List<string> nameSplit = name.Split(new string[] { "::" }, StringSplitOptions.None).ToList();
-      for (int i = 0; i <= Level(name); i++)
-      {
-        path.Add(string.Join("::", nameSplit.Take(i + 1)));
-      }
-      return path;
-    }
-
-    public static string Parentname(string name)
-    {
-      List<string> parentNameSplit = name
-        ?.Split(new string[] { "::" }, StringSplitOptions.None)
-        ?.Take(Level(name))
-        ?.ToList();
-
-      return parentNameSplit != null && parentNameSplit.Count != 0
-        ? string.Join("::", parentNameSplit)
-        : null;
-    }
-
-    public static string Basename(string name)
-    {
-      if (string.IsNullOrEmpty(name))
-        return null;
-      return name?.Split(new string[] { "::" }, StringSplitOptions.None)?.Last();
-    }
-
-    public static int Level(string name) 
-    {
-      if (string.IsNullOrEmpty(name))
-        return -1;
-      return name?.Split(new string[] { "::" }, StringSplitOptions.None)?.Length - 1 ?? -1;
-    }
-  }
-
   public class Deck : INotifyPropertyChanged
   {
     [JsonProperty("id")]
@@ -93,15 +45,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     public List<int> lrnToday { get; set; }
 
     [JsonProperty("mod")] 
-    /// <summary>
-    /// The last time the deck was modified.
-    /// </summary>
     public long LastModificationTime { get; set; }
 
     [JsonProperty("name")]
-    /// <summary>
-    /// Double colon separated string to parent-child relationship
-    /// </summary>
     public string Name { get; set; }
 
     // TODO
@@ -151,7 +97,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       }
     }
 
-
     /// <summary>
     /// Called recursively to get the first selected deck (the one closest to the root)
     /// for the path between and including the current deck -> leaf decks
@@ -185,11 +130,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       return selectedDeck;
     }
 
-    /// <summary>
-    /// Gets the level of the deck in the hierarchy. Zero-indexed: Root decks have level 0.
-    /// Direct child of root has level 1.
-    /// Returns -1 on invalid input.
-    /// </summary>
     public int Level { 
       get 
       {
@@ -229,9 +169,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       return ret;
     }
 
-    /// <summary>
-    /// Returns true if deck is a root deck else false.
-    /// </summary>
     public bool IsRoot { 
       get 
       {
@@ -239,18 +176,12 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       } 
     }
 
-    /// <summary>
-    /// If the name is parent::child::grandchild, Basename returns grandchild
-    /// </summary>
     public string Basename { get 
       {
         return DeckNameEx.Basename(Name);
       } 
     }
 
-    /// <summary>
-    /// If the name is parent::child::grandchild, Parentname returns parent::child
-    /// </summary>
     public string Parentname 
     { get 
       {
@@ -258,10 +189,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       } 
     }
 
-    /// <summary>
-    /// Creates a list that can be iterated over to walk the ankiDeckTree to the desired deck
-    /// parent::child::grandchild becomes [parent, parent::child, parent::child::grandchild]
-    /// </summary>
     public List<string> GetDeckPath()
     {
       return DeckNameEx.GetNamePath(Name);
