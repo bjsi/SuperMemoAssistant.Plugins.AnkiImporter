@@ -23,7 +23,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
     /// Matches clozes in a field content string
     /// 3 capture groups: (1: cloze number), (2: text), (3: hint)
     /// </summary>
-    private static Regex ClozeRegex { get; } = new Regex(@"\{\{c(\d+)::(.*?)(?:::(.*?))?\}\}");
+    public static Regex ClozeRegex { get; } = new Regex(@"\{\{c(\d+)::(.*?)(?:::(.*?))?\}\}");
 
     /// <summary>
     /// The ordinal of the card.
@@ -59,41 +59,48 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
 
     public string CreateClozeAnswer(string fieldContent)
     {
+
+      if (string.IsNullOrEmpty(fieldContent))
+      {
+        LogTo.Error("Failed to CreateClozeAnswer because fieldContent is null");
+        return string.Empty;
+      }
+
       Match match = ClozeRegex.Match(fieldContent);
-      bool matched = true;
       List<string> answerList = new List<string>();
 
-      while (matched)
+      while (match.Success && match.Groups.Count >= 3)
       {
-        if (match.Success && match.Groups.Count >= 3)
-        {
-          int clozeNumber = int.Parse(match.Groups[1].Value);
-          int cardClozeNumber = Ordinal + 1;
 
-          // If the cloze number == cardOrdinal + 1,
-          // add the answer to the answerList 
-          if (clozeNumber == cardClozeNumber)
-          {
-            answerList.Add(match.Groups[2].Value);
-          }
-          match = match.NextMatch();
-        }
-        else
+        int clozeNumber;
+        if (!int.TryParse(match.Groups[1].Value, out clozeNumber))
         {
-          matched = false;
+          LogTo.Error("Failed to parse clozeNumber from cloze");
+          continue;
         }
+
+        int cardClozeNumber = Ordinal + 1;
+
+        // If the cloze number == cardOrdinal + 1,
+        // add the answer to the answerList 
+        if (clozeNumber == cardClozeNumber)
+        {
+          answerList.Add(match.Groups[2].Value);
+        }
+        match = match.NextMatch();
       }
 
       // Create the answerString
       string answerString = string.Empty;
       if (answerList != null && answerList.Count > 0)
       {
-        int i = 1;
-        foreach (var answer in answerList)
+
+        // Create a list of answers
+        for (int i = 0; i < answerList.Count; i++)
         {
-          answerString += $"{i}: {answer}\n";
-          i++;
+          answerString += $"{i + 1}: {answerList[i]}";
         }
+
       }
 
       return answerString?.Trim();
@@ -121,15 +128,21 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
       int prevIndex = 0;
       while (match.Success && match.Groups.Count >= 3)
       {
-        // Get cloze information
-        int clozeNumber = int.Parse(match.Groups[1].Value);
+
+        int clozeNumber;
+        if (!int.TryParse(match.Groups[1].Value, out clozeNumber))
+        {
+          LogTo.Error("Failed to parse clozeNumber from cloze.");
+          continue;
+        }
+
         int cardClozeNumber = Ordinal + 1;
         string clozeText = match.Groups[2].Value;
-        string clozeHint = null;
         int matchStart = match.Index;
         int matchEnd = match.Index + match.Length;
 
         // Get cloze hint if exists
+        string clozeHint = null;
         if (match.Groups.Count >= 4)
         {
           clozeHint = match.Groups[3].Value;
@@ -167,6 +180,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
     /// Create the stubble html render for card content.
     /// TODO: Add type:hint:tts filters.
     /// TODO: Add {{Tags}} = The note's tags, {{ Type }} = the Note's Model name, {{ Deck }} = the card's deck, {{ The card's subdeck }}, {{ Card }} = the type of the card???
+    /// TODO: May need to pass a reference to the Card - then for FrontSide you can simply get Card.Answer, which will already be cached
     /// {{ FrontSide }} = the instantiated qfmt (only valid on the back side)
     /// </summary>
     /// <returns></returns>
