@@ -1,5 +1,6 @@
 ﻿using ServiceStack.DataAnnotations;
 using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
+using SuperMemoAssistant.Plugins.AnkiImporter.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -92,8 +93,46 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       }
     }
 
-    // Relationships
+    /// <summary>
+    /// Rendering result cached in private field.
+    /// </summary>
+    private string _question { get;  set; }
+    public string Question
+    {
+      get
+      {
 
+        if (string.IsNullOrEmpty(_question))
+        {
+          var renderer = new Renderer(Ordinal).Create(TemplateType.Question);
+          string question = renderer.Render(Template.QuestionFormat, Note.Fields);
+          _question = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{question}</div></body></html>";
+        }
+
+        return _question;
+      }
+    }
+
+    /// <summary>
+    /// Rendering result cached in private field.
+    /// </summary>
+    private string _answer { get; set; }
+    public string Answer { 
+      get 
+      { 
+
+        if (string.IsNullOrEmpty(_answer))
+        {
+          var renderer = new Renderer(Ordinal).Create(TemplateType.Answer);
+          string answer = renderer.Render(Template.AnswerFormat, Note.Fields);
+          _answer = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{answer}</div></body></html>";
+        }
+
+        return _answer;
+      } 
+    }
+
+    // Relationships
     [Reference]
     public Note Note { get; set; }
 

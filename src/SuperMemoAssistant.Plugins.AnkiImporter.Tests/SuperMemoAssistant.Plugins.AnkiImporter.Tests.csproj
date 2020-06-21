@@ -38,4 +38,7 @@
 	<ItemGroup>
 	  <Folder Include="Fixture\TestCollection\addons21\" />
 	</ItemGroup>
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
  </Project>

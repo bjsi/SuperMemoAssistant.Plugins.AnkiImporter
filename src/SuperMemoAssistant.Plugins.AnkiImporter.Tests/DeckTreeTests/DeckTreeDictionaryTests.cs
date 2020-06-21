@@ -48,7 +48,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       var tree = new DeckTreeDictionary(decks);
 
       Assert.NotNull(tree);
-      Assert.Empty(tree);
+      Assert.Empty(tree.Filtered);
 
     }
 
