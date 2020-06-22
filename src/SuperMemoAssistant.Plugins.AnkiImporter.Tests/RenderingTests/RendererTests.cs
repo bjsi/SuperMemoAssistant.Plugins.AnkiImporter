@@ -1,7 +1,9 @@
-﻿using SuperMemoAssistant.Plugins.AnkiImporter.Rendering;
+﻿using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Plugins.AnkiImporter.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,58 +14,89 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests.RenderingTests
   public class RendererTests
   {
 
+    private static readonly string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private DataAccess db { get; } = new DataAccess(file);
+
     [Fact]
     public void CreateRendererReturnsRenderer()
     {
 
-      var renderer = new Renderer(0).Create(TemplateType.Question);
+      var card = new Card { Ordinal = 0 };
+      var renderer = new Renderer(card).Create(TemplateType.Question);
       Assert.NotNull(renderer);
 
     }
 
-    [Theory]
-    [InlineData("{{c1::your cloze::your hint}}", true, 1, "your cloze", "your hint")]
-    public void RegexpMatchesCloze(string input, bool matched, int card, string cloze, string hint)
+    [Fact]
+    public void CreateRendererHandleNullCard()
     {
 
-      var regex = Renderer.ClozeRegex;
-      Match match = regex.Match(input);
-
-      Assert.Equal(matched, match.Success);
-      Assert.Equal(card, int.Parse(match.Groups[1].Value));
-      Assert.Equal(cloze, match.Groups[2].Value);
-      Assert.Equal(hint, match.Groups[3].Value);
+      var renderer = new Renderer(null).Create(TemplateType.Question);
+      Assert.Null(renderer);
 
     }
 
     [Fact]
-    public void CreateClozeQuestionCreatesClozeQuestion()
+    public async void RenderCardQuestionReturnsCorrect()
     {
+      
+      Expression<Func<Card, bool>> filter = (c) => c.Id == 1518852959231;
+      var results = await db.GetCardsAsync(filter);
+      var card = results.First();
 
-      var input = new Dictionary<string, string>
-      {
-        { "cloze", "{{c1::your cloze::your hint}}" }
-      };
+      var renderer = new Renderer(card).Create(TemplateType.Question);
 
-      string expected = "<span class=\"cloze\">[your hint]</span>";
-      var renderer = new Renderer(0).Create(TemplateType.Question);
-      string actual = renderer.Render("{{ cloze }}", input);
+      string expected = "";
+      string actual = renderer.Render(card.Template.QuestionFormat, card.Note.Fields);
+
       Assert.Equal(expected, actual);
 
     }
 
     [Fact]
-    public void CreateClozeAnswerCreatesClozeAnswer()
+    public async void RenderCardAnswerReturnsCorrect()
     {
 
-      var input = new Dictionary<string, string>
-      {
-        { "cloze", "{{c1::your cloze::your hint}}" }
-      };
+      Expression<Func<Card, bool>> filter = (c) => c.Id == 1518852959231;
+      var results = await db.GetCardsAsync(filter);
+      var card = results.First();
 
-      string expected = "1: your cloze";
-      var renderer = new Renderer(0).Create(TemplateType.Answer);
-      string actual = renderer.Render("{{ cloze }}", input);
+      var renderer = new Renderer(card).Create(TemplateType.Question);
+
+      string expected = "";
+      string actual = renderer.Render(card.Template.AnswerFormat, card.Note.Fields);
+
+      Assert.Equal(expected, actual);
+
+    }
+
+    [Fact]
+    public async void CardQuestionPropertyReturnsRenderedQuestion()
+    {
+
+      Expression<Func<Card, bool>> filter = (c) => c.Id == 1518852959231;
+      var results = await db.GetCardsAsync(filter);
+      var card = results.First();
+
+      string expected = "";
+      string actual = card.Question;
+
+      Assert.Equal(expected, actual);
+
+    }
+
+    // TODO: Gets rendered with a bunch of escaped newlines and tabs which messes up the styling of the html
+    [Fact]
+    public async void CardAnswerPropertyReturnsRenderedAnswer()
+    {
+
+      Expression<Func<Card, bool>> filter = (c) => c.Id == 1518852959231;
+      var results = await db.GetCardsAsync(filter);
+      var card = results.First();
+
+      string expected = "";
+      string actual = card.Answer;
+
       Assert.Equal(expected, actual);
 
     }

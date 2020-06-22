@@ -37,14 +37,15 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
 {
   public class CardTests
   {
-    public string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
 
+
+    private static readonly string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private DataAccess db { get; } = new DataAccess(file);
 
     [Fact]
     public async void GetCardsReturnsCards()
     {
 
-      var db = new DataAccess(file);
       var cards = await db.GetCardsAsync();
       Assert.True(cards != null && cards.Count() == 456);
 
@@ -55,7 +56,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetCardEnsureDataCorrect(long id)
     {
 
-      var db = new DataAccess(file);
       Expression<Func<Card, bool>> filter = (c) => c.Id == id;
       var results = await db.GetCardsAsync(filter);
       var card = results[0];
@@ -85,7 +85,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetCardIncludesNote(long id)
     {
 
-      var db = new DataAccess(file);
       Expression<Func<Card, bool>> filter = (c) => c.Id == id;
       var results = await db.GetCardsAsync(filter);
       var card = results[0];
@@ -99,7 +98,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetCardsNoteNoteTypeNotNull()
     {
 
-      var db = new DataAccess(file);
       var cards = await db.GetCardsAsync();
 
       foreach (var card in cards)
@@ -113,7 +111,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetCardsNoteFieldsNotNull()
     {
 
-      var db = new DataAccess(file);
       var cards = await db.GetCardsAsync();
 
       foreach (var card in cards)
@@ -126,7 +123,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetCardsCardTypeCorrect()
     {
 
-      var db = new DataAccess(file);
       var cards = await db.GetCardsAsync();
 
       foreach (var card in cards)

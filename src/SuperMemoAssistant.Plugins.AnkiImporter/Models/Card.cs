@@ -97,6 +97,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// Rendering result cached in private field.
     /// </summary>
     private string _question { get;  set; }
+
+    /// <summary>
+    /// Renders the question and returns it
+    /// </summary>
     public string Question
     {
       get
@@ -104,7 +108,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
         if (string.IsNullOrEmpty(_question))
         {
-          var renderer = new Renderer(Ordinal).Create(TemplateType.Question);
+          var renderer = new Renderer(this).Create(TemplateType.Question);
           string question = renderer.Render(Template.QuestionFormat, Note.Fields);
           _question = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{question}</div></body></html>";
         }
@@ -123,7 +127,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
         if (string.IsNullOrEmpty(_answer))
         {
-          var renderer = new Renderer(Ordinal).Create(TemplateType.Answer);
+          var renderer = new Renderer(this).Create(TemplateType.Answer);
           string answer = renderer.Render(Template.AnswerFormat, Note.Fields);
           _answer = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{answer}</div></body></html>";
         }

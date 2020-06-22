@@ -11,13 +11,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
 {
   public class NoteTests
   {
-    public string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+
+    private static readonly string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private DataAccess db { get; } = new DataAccess(file);
 
     [Fact]
     public async void GetNotesReturnsNotes()
     {
 
-      var db = new DataAccess(file);
       var notes = await db.GetNotesAsync();
       Assert.True(notes != null && notes.Count > 0);
 
@@ -27,7 +28,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetNoteIncludesNoteType()
     {
 
-      var db = new DataAccess(file);
       var notes = await db.GetNotesAsync();
       foreach (var note in notes)
       {
@@ -41,7 +41,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetNotesReturnsCorrectData(long id)
     {
 
-      var db = new DataAccess(file);
       Expression<Func<Note, bool>> filter = (c) => c.Id == id;
       var notes = await db.GetNotesAsync(filter);
       var note = notes?.FirstOrDefault();
@@ -64,7 +63,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void NoteFieldsNotNull()
     {
 
-      var db = new DataAccess(file);
       var notes = await db.GetNotesAsync();
 
       foreach (var note in notes)

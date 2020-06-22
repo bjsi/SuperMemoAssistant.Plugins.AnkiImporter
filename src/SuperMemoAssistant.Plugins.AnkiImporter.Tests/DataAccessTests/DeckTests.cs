@@ -13,7 +13,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
   public class DeckTests
   {
 
-    public string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private static readonly string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private DataAccess db { get; } = new DataAccess(file);
 
     [Theory]
     [InlineData(1)]
@@ -26,7 +27,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDeckByIdReturnsDeck(long id)
     {
 
-      var db = new DataAccess(file);
       var deck = await db.GetDecksAsync(x => x.Key == id);
 
       Assert.NotNull(deck);
@@ -42,7 +42,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetEmptyDecksReturnsEmptyDecks(long id)
     {
       
-      var db = new DataAccess(file);
       var deck = await db.GetDecksAsync(x => x.Key == id);
 
       Assert.Empty(deck[id].Cards);
@@ -59,7 +58,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDecksReturnsCorrectNumberOfCards(long id, int cards)
     {
 
-      var db = new DataAccess(file);
       var deck = await db.GetDecksAsync(x => x.Key == id);
 
       Assert.Equal(deck[id].Cards.Count, cards);
@@ -79,7 +77,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDeckByIdIncludesConfig(long id)
     {
 
-      var db = new DataAccess(file);
       var deck = await db.GetDecksAsync(x => x.Key == id);
 
       Assert.NotNull(deck[id].Config);
@@ -91,7 +88,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDeckDefaultDeckIsEmpty()
     {
       long id = 1;
-      var db = new DataAccess(file);
       var decks = await db.GetDecksAsync(x => x.Key == id);
 
       Assert.Empty(decks[id].Cards);
@@ -109,7 +105,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDeckByIdIncludesCards(long id)
     {
 
-      var db = new DataAccess(file);
       var decks = await db.GetDecksAsync(x => x.Key == id);
       var deck = decks[id];
 
@@ -134,7 +129,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDeckByIdIncludesCardsCardsIncludeDeck(long id)
     {
 
-      var db = new DataAccess(file);
       var results = await db.GetDecksAsync(x => x.Key == id);
       var deck = results[id];
 
@@ -150,7 +144,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
     public async void GetDecksReturnsDecks()
     {
 
-      var db = new DataAccess(file);
       var decks = await db.GetDecksAsync();
 
       Assert.NotNull(decks);
@@ -165,6 +158,5 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Assert.NotNull(decks[1586701137482]);
 
     }
-
   }
 }

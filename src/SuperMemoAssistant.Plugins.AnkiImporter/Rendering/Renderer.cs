@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Anotar.Serilog;
 using System.Text.RegularExpressions;
+using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+
+// See here for template / field info https://docs.ankiweb.net/#/templates/intro
+// See here for special field eg {{ Tags }} info https://docs.ankiweb.net/#/templates/fields
 
 namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
 {
@@ -26,24 +30,70 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
     public static Regex ClozeRegex { get; } = new Regex(@"\{\{c(\d+)::(.*?)(?:::(.*?))?\}\}");
 
     /// <summary>
-    /// The ordinal of the card.
+    /// The card to be rendered.
     /// </summary>
-    private int Ordinal { get; }
+    private Card Card { get; }
 
-    public Renderer(int Ordinal)
+    public Renderer(Card Card)
     {
-      this.Ordinal = Ordinal;
+      this.Card = Card;
+      this.QPatternTransList.AddRange(baseList);
+      this.APatternTransList.AddRange(baseList);
     }
+
+    /// <summary>
+    /// baseList is shared by the question and answer lists
+    /// ///baseList is shared by the question and answer lists.
+    /// </summary>
+    private PatternTransformationList baseList => new PatternTransformationList
+    {
+
+      // eg. {{ Tags }}
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Tags"),
+        new Transformation( _ => Card.Note.Tags)
+      ),
+
+      // eg. {{ Type }}
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Type"),
+        new Transformation( _ => Card.Note.NoteType.Name)
+      ),
+
+      // eg. {{ Subdeck }}
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Subdeck"),
+        // TODO: Check this is correct...
+        new Transformation( _ => Card.Deck.Basename)
+      ),
+
+      // eg. {{ Deck }}
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Deck"),
+        new Transformation( _ => Card.Deck.Name)
+      ),
+
+      // eg. {{ Card }} TODO: Check this is correct
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Card"),
+        new Transformation( _ => Card.Template.Name)
+      )
+
+    };
 
     /// <summary>
     /// PatternTransformationList for Question Templates
     /// </summary>
     public PatternTransformationList QPatternTransList => new PatternTransformationList
     {
+
+      // TODO: {{ hint:cloze:Text }}
+      // eg. {{ cloze:Text }}
       new Tuple<Pattern, Transformation>(
-        new Pattern(x => string.IsNullOrEmpty(x) ? false : x.Contains("cloze")),
-        new Transformation(x => CreateClozeQuestion(x))
-      )
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key.Split(':').Any(x => x == "cloze")),
+        new Transformation(fieldContent => CreateClozeQuestion(fieldContent))
+      ),
+
     };
 
     /// <summary>
@@ -51,10 +101,21 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
     /// </summary>
     public PatternTransformationList APatternTransList => new PatternTransformationList
     {
+
+      // TODO: {{ hint:cloze:Text }}
+      // eg. {{ cloze:Text }}
       new Tuple<Pattern, Transformation>(
-        new Pattern(x => string.IsNullOrEmpty(x) ? false : x.Contains("cloze")),
-        new Transformation(x => CreateClozeAnswer(x))
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key.Split(':').Any(x => x == "cloze")),
+        new Transformation(fieldContent => CreateClozeAnswer(fieldContent))
+      ),
+
+      // eg. {{ FrontSide }}
+      // Returns the rendered Question side
+      new Tuple<Pattern, Transformation>(
+        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "FrontSide"),
+        new Transformation( _ => Card.Question)
       )
+
     };
 
     public string CreateClozeAnswer(string fieldContent)
@@ -79,7 +140,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
           continue;
         }
 
-        int cardClozeNumber = Ordinal + 1;
+        int cardClozeNumber = Card.Ordinal + 1;
 
         // If the cloze number == cardOrdinal + 1,
         // add the answer to the answerList 
@@ -136,7 +197,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
           continue;
         }
 
-        int cardClozeNumber = Ordinal + 1;
+        int cardClozeNumber = Card.Ordinal + 1;
         string clozeText = match.Groups[2].Value;
         int matchStart = match.Index;
         int matchEnd = match.Index + match.Length;
@@ -180,12 +241,19 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
     /// Create the stubble html render for card content.
     /// TODO: Add type:hint:tts filters.
     /// TODO: Add {{Tags}} = The note's tags, {{ Type }} = the Note's Model name, {{ Deck }} = the card's deck, {{ The card's subdeck }}, {{ Card }} = the type of the card???
-    /// TODO: May need to pass a reference to the Card - then for FrontSide you can simply get Card.Answer, which will already be cached
-    /// {{ FrontSide }} = the instantiated qfmt (only valid on the back side)
+    /// TODO: {{ type: }} the field content should be typed in (spelling component)
+    /// TODO: {{ Back }}
+    /// TODO: {{ FrontSide }} = the instantiated qfmt (only valid on the back side)
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Renderer or Null</returns>
     public StubbleVisitorRenderer Create(TemplateType templateType)
     {
+
+      if (this.Card == null)
+      {
+        LogTo.Warning("Failed to Create Renderer because card was null");
+        return null;
+      }
 
       // TODO: document
       var patternTransformationList = templateType == TemplateType.Question
