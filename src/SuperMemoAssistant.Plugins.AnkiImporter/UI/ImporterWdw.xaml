@@ -150,17 +150,31 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding Id}"
+                           Margin="3"
                            Foreground="Black">
                 </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
         
-        <!-- Card Fields Column -->
-          <DataGridTemplateColumn Header="Fields">
+        <!-- Question String Column -->
+          <DataGridTemplateColumn Header="Question">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding Note.FieldString}"
+                <TextBlock Text="{Binding Question}"
+                           Margin="3"
+                           Foreground="Black">
+                </TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        
+        <!-- Answer String Column -->
+          <DataGridTemplateColumn Header="Answer">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Answer}"
+                           Margin="3"
                            Foreground="Black">
                 </TextBlock>
               </DataTemplate>

@@ -55,8 +55,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
     [JsonProperty("tmpls")]
     public List<Template> Templates { get; set; }
+
   }
 
+  // TODO: Needs a reference to its NoteType?
   public class Template
   {
 
@@ -103,5 +105,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     // TODO
     [JsonProperty("sticky")]
     public bool sticky { get; set; }
+
   }
 }
