@@ -27,7 +27,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 
       if (value is Card)
       {
-        return (value as Card).Template.Name;
+        return (value as Card)?.Template.Name;
       }
       return "Error: value is not of type Card";
 

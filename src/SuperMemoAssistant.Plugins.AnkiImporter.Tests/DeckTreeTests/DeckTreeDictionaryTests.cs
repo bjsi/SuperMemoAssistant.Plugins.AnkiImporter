@@ -12,7 +12,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
   public class DeckTreeDictionaryTests
   {
 
-    private static readonly string file = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    private static readonly string file = @"C:\Users\polit\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
     private DataAccess db { get; } = new DataAccess(file);
 
     // Filtering

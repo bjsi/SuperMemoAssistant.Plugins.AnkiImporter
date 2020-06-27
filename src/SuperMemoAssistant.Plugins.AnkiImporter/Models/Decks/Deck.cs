@@ -11,7 +11,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
 {
 
   /// <summary>
-  /// Represents an Anki Deck.
+  /// Represents an Anki Deck. Used For Seriallizing the theJSON Data
   /// TODO: Consider 
   /// </summary>
   public class Deck : INotifyPropertyChanged
@@ -44,7 +44,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
     [JsonProperty("lrnToday")]
     public List<int> lrnToday { get; set; }
 
-    [JsonProperty("mod")] 
+    [JsonProperty("mod")]
     public long LastModificationTime { get; set; }
 
     [JsonProperty("name")]
@@ -130,30 +130,19 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
       return selectedDeck;
     }
 
-    public int Level { 
-      get 
+    public int Level {
+      get
       {
         return DeckNameEx.Level(Name);
-      } 
+      }
     }
 
     /// <summary>
     /// Get all child deck cards recursively, beginning at and including the current deck.
-    /// TODO: Refactor these two methods into one?
     /// </summary>
-    public List<Card> AllCards 
+    public List<Card> AllCards
     {
-      get
-      {
-        List<Card> allCards = new List<Card>();
-        allCards.AddRange(Cards);
-        foreach (KeyValuePair<string, Deck> keyValuePair in ChildDecks)
-        {
-          var deck = keyValuePair.Value;
-          allCards.AddRange(deck.RecursivelyGetCards());
-        }
-        return allCards;
-      }
+      get=>this.RecursivelyGetCards();
     }
 
     private List<Card> RecursivelyGetCards()
@@ -169,11 +158,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
       return ret;
     }
 
-    public bool IsRoot { 
-      get 
+    /// <summary>
+    /// Holds whether the current Deck is root or not
+    /// </summary>
+    public bool IsRoot {
+      get
       {
         return DeckNameEx.IsRoot(Name);
-      } 
+      }
     }
 
     public string Basename { get 
@@ -182,8 +174,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
       } 
     }
 
-    public string Parentname 
-    { get 
+    public string Parentname
+    { get
       {
         return DeckNameEx.Parentname(Name);
       } 
@@ -195,6 +187,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
     }
 
     // For UI
+    /// <summary>
+    /// Notifiy the UI for the changed Deck in Question.
+    /// </summary>
     private bool _ToImport { get; set; } = false;
     public bool ToImport
     {
@@ -218,7 +213,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
       }
     }
   }
-
+  /// <summary>
+  /// represents the DeckConfig
+  /// </summary>
   public class DeckConfig
   {
 

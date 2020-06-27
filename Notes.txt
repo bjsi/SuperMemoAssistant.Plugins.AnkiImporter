@@ -1,0 +1,30 @@
+# AnkiImporterPlugin.cs
+	this class is responsible for SMA Plugin Config and loading the GUI in General;
+
+# DeckNameEx.cs
+	class that deals with Deck naming styles:
+		determines if the name is a root
+		provides a way of travering the name of a deck's note
+		given a sting name determine the parent 
+		
+
+# DataAccess.cs
+	-OrmLiteConnectionFactory
+		handles database mapping etc <link https://en.wikipedia.org/wiki/Object-relational_mapping>
+
+	-DeckConfig class
+		props:
+			* int                        Id
+			* bool                       Autoplay
+			* Dictionary<string, object> lapse
+			* bool                       dyn
+			* int                        maxTaken
+			* long                       LastModificationTime
+			* string                     Name
+			* bool                       ReplayQuestion
+			* Dictionary<string, object> rev
+			* int                        Timer
+			* int                        usn
+			* Dictionary<string, object> New
+
+

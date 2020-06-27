@@ -10,66 +10,145 @@ using System.Threading.Tasks;
 
 namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 {
+  /// <summary>
+  /// Enum describing the supported Card Types 
+  /// </summary>
   public enum CardType
   {
     Cloze,
     Normal
   }
-
+  /// <summary>
+  /// Mapping the cards Table attributes
+  /// </summary>
   [Alias("cards")]
   public class Card
   {
+    /// <summary>
+    /// time Epoch wehen the card was created
+    /// </summary>
     [Alias("id")]
     public long Id { get; set; }
 
+    /// <summary>
+    /// notes Identifier
+    /// </summary>
     [Alias("nid")]
     public long NoteId { get; set; }
-
+    
+    /// <summary>
+    /// Deck identifier
+    /// </summary>
     [Alias("did")]
     public long DeckId { get; set; }
 
+
+    /// <summary>
+    /// orginal
+    /// card templates   = 0 to num of templates -1 ???
+    /// close deletions  = 0 to max cloze index -1  ???
+    /// </summary>
     [Alias("ord")]
     public int Ordinal { get; set; }
 
+    /// <summary>
+    /// last modificaton time 
+    /// </summary>
     [Alias("mod")]
     public long LastModificationTime { get; set; }
 
     // TODO
+    /// <summary>
+    /// update Sequnence number
+    /// -1   = changes need to be synced
+    /// else = changes that need to fetched from the server
+    /// </summary>
     [Alias("usn")]
     public int usn { get; set; }
 
     [Alias("type")]
     public int Type { get; set; }
 
+    /// <summary>
+    /// Describes the State of the card:
+    ///     -3 = user buried  (In scheduler 2)  ///apprently there are schedulers???
+    ///     -2 = sched buried (In scheduler 2)
+    ///     -2 = buried       (In scheduler 1)
+    ///     -1 = suspended
+    ///      0 = new
+    ///      1 = learning
+    ///      2 = review
+    ///      3 = in learning with at least a day after the previous review
+    ///      4 = preview
+    /// </summary>
     [Alias("queue")]
     public int Queue { get; set; }
 
     // TODO
+    /// <summary>
+    /// if the card is:
+    /// New   : id is random int or the note id
+    /// Due   : day relative to when the deck was created
+    /// Learn : timestamp 
+    /// </summary>
     [Alias("due")]
     public int due { get; set; }
 
+
+    /// <summary>
+    /// interval for Anki's algo
+    /// -ve value : seconds
+    /// +ve value : days
+    /// </summary>
     [Alias("ivl")]
     public int Interval { get; set; }
-
+    
+    /// <summary>
+    /// The ease factor of the card
+    /// </summary>
     [Alias("factor")]
     public int Factor { get; set; }
 
+    /// <summary>
+    ///  number of reviews
+    /// </summary>
     [Alias("reps")]
     public int Reps { get; set; }
 
+    /// <summary>
+    /// the number of times the card was not answered correctly
+    /// </summary>
     [Alias("lapses")]
     public int Lapses { get; set; }
 
     // TODO:
+    /// <summary>
+    ///  (the number of reps left today)*1000 + (the number of reps left till graduation) 
+    /// </summary>
     [Alias("left")]
     public int left { get; set; }
 
+    /// <summary>
+    /// original due: In filtered decks, it's the original due date that the card had before moving to filtered.
+    /// If the card lapsed in scheduler1, then it's the value before the lapse. 
+    ///  In any other case it's 0.
+    /// </summary>
     [Alias("odue")]
     public int OriginalDue { get; set; }
 
+    /// <summary>
+    /// original deck  id
+    /// </summary>
     [Alias("odid")]
     public int OriginalDeckId { get; set; }
 
+    /// <summary>
+    /// Red      1, 
+    /// Orange   2, 
+    /// Green    3, 
+    /// Blue     4, 
+    /// no flag: 0
+    /// </summary>
     [Alias("flags")]
     public int Flags { get; set; }
 
@@ -121,9 +200,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// Rendering result cached in private field.
     /// </summary>
     private string _answer { get; set; }
-    public string Answer { 
-      get 
-      { 
+    public string Answer {
+      get
+      {
 
         if (string.IsNullOrEmpty(_answer))
         {
@@ -133,7 +212,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
         }
 
         return _answer;
-      } 
+      }
     }
 
     // Relationships
