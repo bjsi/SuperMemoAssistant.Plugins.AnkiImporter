@@ -73,8 +73,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
     public ImporterWdw CurrentInstance { get; set; }
 
     // TODO: Fix this
-    public string TestAnkiCollectionDB { get; } = @"C:\Users\polit\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
-    public string TestAnkiCollectionMediaDir { get; } = @"C:\Users\polit\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.media\";
+    public string TestAnkiCollectionDB { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.anki2";
+    public string TestAnkiCollectionMediaDir { get; } = @"C:\Users\james\source\repos\AnkiImporter\src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\Fixture\TestCollection\User 1\collection.media\";
 
     #endregion
 

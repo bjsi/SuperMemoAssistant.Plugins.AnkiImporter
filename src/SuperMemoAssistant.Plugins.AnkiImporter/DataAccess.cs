@@ -13,50 +13,85 @@ using System.Threading.Tasks;
 
 namespace SuperMemoAssistant.Plugins.AnkiImporter
 {
+  /// <summary>
+  /// Class converting for Deserialization of JSON objects into objects.
+  /// </summary>
   public class DataAccess
   {
+    // creating a database conncection Object
     public OrmLiteConnectionFactory dbFactory;
     private string database { get; set; }
     public DataAccess(string database)
     {
       this.database = database;
+      //Setting connection to database
       this.dbFactory = new OrmLiteConnectionFactory(database, SqliteDialect.Provider);
     }
 
     //
     // JSON Helpers
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="DeckConfigs"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static DeckConfig GetDeckConfig(string DeckConfigs, long id)
     {
 
       var deckConfigs = JsonConvert.DeserializeObject<Dictionary<long, DeckConfig>>(DeckConfigs);
       DeckConfig config = null;
-      deckConfigs?.TryGetValue(id, out config);
+      deckConfigs?.TryGetValue(id, out config); //If no object is found maintain it's current state as null else set config it to the new object
       return config;
 
     }
 
+    /// <summary>
+    /// Overloaded Function to sta
+    /// </summary>
+    /// <param name="DeckConfigs"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static DeckConfig GetDeckConfig(Dictionary<long, DeckConfig> DeckConfigs, long id)
     {
       DeckConfig config = null;
       DeckConfigs?.TryGetValue(id, out config);
       return config;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="DeckConfigs"></param>
+    /// <returns></returns>
     public static Dictionary<long, DeckConfig> GetDeckConfigsObject(string DeckConfigs)
     {
       return JsonConvert.DeserializeObject<Dictionary<long, DeckConfig>>(DeckConfigs);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Decks"></param>
+    /// <returns></returns>
     public static Dictionary<long, Deck> GetDecksObject(string Decks)
     {
       return JsonConvert.DeserializeObject<Dictionary<long, Deck>>(Decks);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="NoteTypes"></param>
+    /// <returns></returns>
     public static Dictionary<long, NoteType> GetNoteTypesObject(string NoteTypes)
     {
       return JsonConvert.DeserializeObject<Dictionary<long, NoteType>>(NoteTypes);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="NoteTypes"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static NoteType GetNoteType(Dictionary<long, NoteType> NoteTypes, long id)
     {
 
@@ -68,6 +103,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
     //
     // Decks
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     public async Task<Dictionary<long, Deck>> GetDecksAsync(Func<KeyValuePair<long, Deck>, bool> filter = null)
     {
 
@@ -125,6 +165,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
     //
     // Notes
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
     public async Task<List<Note>> GetNotesAsync(Expression<Func<Note, bool>> predicate = null)
     {
 
@@ -170,6 +215,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
     //
     // Note Types
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public async Task<Dictionary<long, NoteType>> GetNoteTypesAsync()
     {
       if (!File.Exists(database))
@@ -201,6 +250,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
 
     //
     // Cards
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
     public async Task<List<Card>> GetCardsAsync(Expression<Func<Card, bool>> predicate = null)
     {
 
