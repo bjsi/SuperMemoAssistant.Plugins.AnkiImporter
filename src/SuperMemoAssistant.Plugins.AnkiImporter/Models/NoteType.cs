@@ -80,7 +80,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [JsonProperty("afmt")]
     public string AnswerFormat { get; set; }
   }
-
+  
   public class Field
   {
     [JsonProperty("name")]
@@ -103,6 +103,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     public int FontSize { get; set; }
 
     // TODO
+    /// <summary>
+    /// contain the value of the last thing that was added
+    /// </summary>
     [JsonProperty("sticky")]
     public bool sticky { get; set; }
 

@@ -11,6 +11,9 @@
     <Version>1.0.0</Version>
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -65,7 +68,7 @@
       <Version>2.0.5-alpha.6</Version>
     </PackageReference>
     <PackageReference Include="SuperMemoAssistant.Services.Sentry">
-      <Version>2.0.5-alpha.2</Version>
+      <Version>1.0.1.14</Version>
     </PackageReference>
     <PackageReference Include="SuperMemoAssistant.Services.UI" Version="2.0.4.6" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.1" />
