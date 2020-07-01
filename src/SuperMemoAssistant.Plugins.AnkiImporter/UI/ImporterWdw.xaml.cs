@@ -19,45 +19,6 @@ using System.Windows.Shapes;
 namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 {
 
-  public class CardTemplateSelector : IValueConverter
-  {
-
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-
-      if (value is Card)
-      {
-        return (value as Card).Template.Name;
-      }
-      return "Error: value is not of type Card";
-
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-      throw new NotImplementedException();
-    }
-
-  }
-
-  public class DeckBaseNameSelector : IValueConverter
-  {
-
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-      if (value is Card)
-      {
-        return (value as Card).Deck.Basename;
-      }
-      return "Error: value is not of type Card";
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-      throw new NotImplementedException();
-    }
-  }
-
   /// <summary>
   /// Special collection class for the collection view source
   /// </summary>
@@ -88,8 +49,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
     private void RefreshSMKT()
     {
       tv2.ItemsSource = Trees.Filtered.Values;
+      // TODO: Add subfolders, cards
     }
 
+    // TODO: Fix
     private void RefreshDeckGrid()
     {
 
