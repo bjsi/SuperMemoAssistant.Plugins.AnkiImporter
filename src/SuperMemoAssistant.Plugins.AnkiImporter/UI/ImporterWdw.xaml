@@ -73,7 +73,7 @@
         <TreeView.ItemTemplate>
           <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
             <StackPanel Orientation="Horizontal">
-              <Image  />
+              <Image Source="pack://application:,,,/SuperMemoAssistant.Interop;component/Resources/concept_icon.jpg"/>
               <TextBlock Text="{Binding Basename}"
                          Margin="2"/>
               <TextBlock Margin="2">

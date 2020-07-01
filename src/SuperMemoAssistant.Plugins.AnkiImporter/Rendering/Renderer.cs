@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Anotar.Serilog;
 using System.Text.RegularExpressions;
 using SuperMemoAssistant.Plugins.AnkiImporter.Models;
+using SuperMemoAssistant.Interop.SuperMemo.Content.Contents;
 
 // See here for template / field info https://docs.ankiweb.net/#/templates/intro
 // See here for special field eg {{ Tags }} info https://docs.ankiweb.net/#/templates/fields
@@ -15,235 +16,75 @@ using SuperMemoAssistant.Plugins.AnkiImporter.Models;
 namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
 {
 
-  // Type aliases
-  using Pattern = Func<string, bool>;
-  using Transformation = Func<string, string>;
-  using PatternTransformationList = List<Tuple<Func<string, bool>, Func<string, string>>>;
+  public enum TemplateType
+  {
+    Question,
+    Answer
+  }
 
-  public class Renderer
+  public class FieldRenderOptions
+  {
+    // Extract pictures from fields into their own components or leave them
+    public bool ExtractPictures = true;
+  }
+
+  public partial class Renderer
   {
 
-    /// <summary>
-    /// Matches clozes in a field content string
-    /// 3 capture groups: (1: cloze number), (2: text), (3: hint)
-    /// </summary>
+    // 3 capture groups: (1: cloze number), (2: text), (3: hint)
     public static Regex ClozeRegex { get; } = new Regex(@"\{\{c(\d+)::(.*?)(?:::(.*?))?\}\}");
 
-    /// <summary>
-    /// The card to be rendered.
-    /// </summary>
+    // The card to be rendered.
     private Card Card { get; }
+
+    // The first question handler in the render chain
+    private TemplateKeyHandler FirstQuestionHandler { get; set; }
+
+    // The first answer handler in the render chain
+    private TemplateKeyHandler FirstAnswerHandler { get; set; }
+
+    // Rendered
+    public Dictionary<string, List<ContentBase>> RenderedAnswerFieldContentMap { get; set; } = new Dictionary<string, List<ContentBase>>();
+    public Dictionary<string, List<ContentBase>> RenderedQuestionFieldContentMap { get; set; } = new Dictionary<string, List<ContentBase>>();
 
     public Renderer(Card Card)
     {
       this.Card = Card;
-      this.QPatternTransList.AddRange(baseList);
-      this.APatternTransList.AddRange(baseList);
+      FirstAnswerHandler = SetupAnswerHandlers();
+      FirstQuestionHandler = SetupQuestionHandlers();
     }
 
-    /// <summary>
-    /// baseList is shared by the question and answer lists
-    /// ///baseList is shared by the question and answer lists.
-    /// </summary>
-    private PatternTransformationList baseList => new PatternTransformationList
+    private TemplateKeyHandler SetupQuestionHandlers()
     {
 
-      // eg. {{ Tags }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Tags"),
-        new Transformation( _ => Card.Note.Tags)
-      ),
+      var QBaseHandlers = CreateBaseRenderChain();
+      var FirstQBaseHandler = QBaseHandlers.Item1;
+      var LastQBaseHanlder = QBaseHandlers.Item2;
 
-      // eg. {{ Type }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Type"),
-        new Transformation( _ => Card.Note.NoteType.Name)
-      ),
+      LastQBaseHanlder.Next = CreateQuestionRenderChain();
 
-      // eg. {{ Subdeck }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Subdeck"),
-        // TODO: Check this is correct...
-        new Transformation( _ => Card.Deck.Basename)
-      ),
+      return FirstQBaseHandler;
 
-      // eg. {{ Deck }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Deck"),
-        new Transformation( _ => Card.Deck.Name)
-      ),
-
-      // eg. {{ Card }} TODO: Check this is correct
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "Card"),
-        new Transformation( _ => Card.Template.Name)
-      )
-
-    };
-
-    /// <summary>
-    /// PatternTransformationList for Question Templates
-    /// </summary>
-    public PatternTransformationList QPatternTransList => new PatternTransformationList
-    {
-
-      // TODO: {{ hint:cloze:Text }}
-      // eg. {{ cloze:Text }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key.Split(':').Any(x => x == "cloze")),
-        new Transformation(fieldContent => CreateClozeQuestion(fieldContent))
-      ),
-
-    };
-
-    /// <summary>
-    /// PatternTransformationList for Answer Templates
-    /// </summary>
-    public PatternTransformationList APatternTransList => new PatternTransformationList
-    {
-
-      // TODO: {{ hint:cloze:Text }}
-      // eg. {{ cloze:Text }}
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key.Split(':').Any(x => x == "cloze")),
-        new Transformation(fieldContent => CreateClozeAnswer(fieldContent))
-      ),
-
-      // eg. {{ FrontSide }}
-      // Returns the rendered Question side
-      new Tuple<Pattern, Transformation>(
-        new Pattern(key => string.IsNullOrEmpty(key) ? false : key == "FrontSide"),
-        new Transformation( _ => Card.Question)
-      )
-
-    };
-
-    public string CreateClozeAnswer(string fieldContent)
-    {
-
-      if (string.IsNullOrEmpty(fieldContent))
-      {
-        LogTo.Error("Failed to CreateClozeAnswer because fieldContent is null");
-        return string.Empty;
-      }
-
-      Match match = ClozeRegex.Match(fieldContent);
-      List<string> answerList = new List<string>();
-
-      while (match.Success && match.Groups.Count >= 3)
-      {
-
-        int clozeNumber;
-        if (!int.TryParse(match.Groups[1].Value, out clozeNumber))
-        {
-          LogTo.Error("Failed to parse clozeNumber from cloze");
-          continue;
-        }
-
-        int cardClozeNumber = Card.Ordinal + 1;
-
-        // If the cloze number == cardOrdinal + 1,
-        // add the answer to the answerList 
-        if (clozeNumber == cardClozeNumber)
-        {
-          answerList.Add(match.Groups[2].Value);
-        }
-        match = match.NextMatch();
-      }
-
-      // Create the answerString
-      string answerString = string.Empty;
-      if (answerList != null && answerList.Count > 0)
-      {
-
-        // Create a list of answers
-        for (int i = 0; i < answerList.Count; i++)
-        {
-          answerString += $"{i + 1}: {answerList[i]}";
-        }
-
-      }
-
-      return answerString?.Trim();
     }
 
-    public string CreateClozeQuestion(string fieldContent)
+    private TemplateKeyHandler SetupAnswerHandlers()
     {
 
-      string question = string.Empty;
+      var ABaseHandlers = CreateBaseRenderChain();
+      var FirstABaseHandler = ABaseHandlers.Item1;
+      var LastABaseHandler = ABaseHandlers.Item2;
 
-      if (string.IsNullOrEmpty(fieldContent))
-      {
-        LogTo.Error("Failed to CreateClozeQuestion because cloze is null");
-        return question;
-      }
+      LastABaseHandler.Next = CreateAnswerRenderChain();
 
-      // Search for the cloze
-      Match match = ClozeRegex.Match(fieldContent);
-      if (!match.Success || match.Groups.Count < 3)
-      {
-        LogTo.Error("Failed to CreateClozeQuestion because cloze regex didn't match");
-        return question;
-      }
-
-      int prevIndex = 0;
-      while (match.Success && match.Groups.Count >= 3)
-      {
-
-        int clozeNumber;
-        if (!int.TryParse(match.Groups[1].Value, out clozeNumber))
-        {
-          LogTo.Error("Failed to parse clozeNumber from cloze.");
-          continue;
-        }
-
-        int cardClozeNumber = Card.Ordinal + 1;
-        string clozeText = match.Groups[2].Value;
-        int matchStart = match.Index;
-        int matchEnd = match.Index + match.Length;
-
-        // Get cloze hint if exists
-        string clozeHint = null;
-        if (match.Groups.Count >= 4)
-        {
-          clozeHint = match.Groups[3].Value;
-        }
-
-        if (clozeNumber == cardClozeNumber)
-        {
-          question += fieldContent.Substring(prevIndex, matchStart - prevIndex);
-          question += "<span class=\"cloze\">[";
-          // Add hint or ...
-          question += string.IsNullOrEmpty(clozeHint)
-            ? "..."
-            : clozeHint;
-          question += "]</span>";
-          prevIndex = matchEnd;
-        }
-        else
-        {
-          question += fieldContent.Substring(prevIndex, matchStart - prevIndex);
-          question += clozeText;
-          prevIndex = matchEnd;
-        }
-        match = match.NextMatch();
-      }
-
-      // If questionstring not null, add the end part.
-      if (!string.IsNullOrEmpty(question))
-      {
-        question += fieldContent.Substring(prevIndex);
-      }
-      return question;
+      return FirstABaseHandler;
     }
 
     /// <summary>
     /// Create the stubble html render for card content.
-    /// TODO: Add type:hint:tts filters.
-    /// TODO: Add {{Tags}} = The note's tags, {{ Type }} = the Note's Model name, {{ Deck }} = the card's deck, {{ The card's subdeck }}, {{ Card }} = the type of the card???
+    /// TODO: {{ hint: }} 
+    /// TODO: {{ tts: }} filters.
     /// TODO: {{ type: }} the field content should be typed in (spelling component)
     /// TODO: {{ Back }}
-    /// TODO: {{ FrontSide }} = the instantiated qfmt (only valid on the back side)
     /// </summary>
     /// <returns>Renderer or Null</returns>
     public StubbleVisitorRenderer Create(TemplateType templateType)
@@ -255,10 +96,9 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
         return null;
       }
 
-      // TODO: document
-      var patternTransformationList = templateType == TemplateType.Question
-        ? QPatternTransList
-        : APatternTransList;
+      var firstHandler = templateType == TemplateType.Question
+        ? FirstQuestionHandler
+        : FirstAnswerHandler;
 
       // Require a special value getter because  of anki's custom mustache templating.
       // The fieldContentMap is a mapping between field names and content,
@@ -296,34 +136,29 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
             return string.Empty;
           }
 
-          foreach (var patternAction in patternTransformationList)
-          {
+          string output = firstHandler.HandleRequest(key, fieldContentMap, string.Empty);
 
-            // The first pattern that matches the key will execute the transformation function on the fieldContent
+          if (string.IsNullOrEmpty(output))
+            fieldContentMap.TryGetValue(fieldName, out output);
 
-            var pattern = patternAction.Item1;
-            var transformation = patternAction.Item2;
+          output = output ?? string.Empty;
 
-            if (pattern(key))
-            {
+          //if (templateType == TemplateType.Question)
+          //  RenderedQuestionFieldContentMap[fieldName] = CreateSMComponents(output, TemplateType.Question);
+          //else
+          //  RenderedAnswerFieldContentMap[fieldName] = CreateSMComponents(output, TemplateType.Answer);
 
-              if (!fieldContentMap.TryGetValue(fieldName, out var fieldContent))
-              {
-                LogTo.Warning($"Stubble custom value getter failed to find {fieldName} in fieldContentMap");
-                return string.Empty;
-              }
-
-              return transformation(fieldContent);
-            }
-
-          }
-
-          fieldContentMap.TryGetValue(fieldName, out var ret);
-          return ret ?? string.Empty;
+          return output ?? string.Empty;
 
         })
         .SetEncodingFunction(x => x); // allow unescaped html
       }).Build();
+
+    }
+
+    private List<ContentBase> CreateSMComponents(string output, TemplateType type)
+    {
+      throw new NotImplementedException();
     }
   }
 }
