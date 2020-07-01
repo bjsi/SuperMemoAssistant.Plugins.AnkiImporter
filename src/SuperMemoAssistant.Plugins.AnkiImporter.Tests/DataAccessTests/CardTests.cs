@@ -66,7 +66,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Assert.Equal(1586701137476, card.DeckId);
       Assert.Equal(0, card.Ordinal);
       Assert.Equal(1586701137, card.LastModificationTime);
-      Assert.Equal(-1, card.usn);
+      Assert.Equal(-1, card.UpdateSequenceNumber);
       Assert.Equal(0, card.Type);
       Assert.Equal(0, card.Queue);
       Assert.Equal(1, card.due);
@@ -74,7 +74,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Assert.Equal(2500, card.Factor);
       Assert.Equal(0, card.Reps);
       Assert.Equal(0, card.Lapses);
-      Assert.Equal(1001, card.left);
+      Assert.Equal(1001, card.Left);
       Assert.Equal(0, card.OriginalDue);
       Assert.Equal(0, card.OriginalDeckId);
       Assert.Equal(0, card.Flags);

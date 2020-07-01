@@ -18,12 +18,14 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     Cloze,
     Normal
   }
+
   /// <summary>
   /// Mapping the cards Table attributes
   /// </summary>
   [Alias("cards")]
   public class Card
   {
+
     /// <summary>
     /// time Epoch wehen the card was created
     /// </summary>
@@ -31,7 +33,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     public long Id { get; set; }
 
     /// <summary>
-    /// notes Identifier
+    /// note Identifier
     /// </summary>
     [Alias("nid")]
     public long NoteId { get; set; }
@@ -59,12 +61,12 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
 
     // TODO
     /// <summary>
-    /// update Sequnence number
+    /// update sequence number
     /// -1   = changes need to be synced
     /// else = changes that need to fetched from the server
     /// </summary>
     [Alias("usn")]
-    public int usn { get; set; }
+    public int UpdateSequenceNumber { get; set; }
 
     [Alias("type")]
     public int Type { get; set; }
@@ -121,12 +123,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [Alias("lapses")]
     public int Lapses { get; set; }
 
-    // TODO:
     /// <summary>
     ///  (the number of reps left today)*1000 + (the number of reps left till graduation) 
     /// </summary>
     [Alias("left")]
-    public int left { get; set; }
+    public int Left { get; set; }
 
     /// <summary>
     /// original due: In filtered decks, it's the original due date that the card had before moving to filtered.

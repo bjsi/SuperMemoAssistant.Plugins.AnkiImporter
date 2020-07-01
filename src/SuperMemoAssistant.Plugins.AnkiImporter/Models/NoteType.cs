@@ -25,11 +25,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     public long LastModificationTime { get; set; }
 
     [JsonProperty("usn")]
-    public int usn { get; set; }
+    public int UpdateSequenceNumber { get; set; }
 
-    // TODO
     [JsonProperty("vers")]
-    public object[] vers { get; set; }
+    public object[] VersionNumber { get; set; }
 
     [JsonProperty("css")]
     public string CSS { get; set; }

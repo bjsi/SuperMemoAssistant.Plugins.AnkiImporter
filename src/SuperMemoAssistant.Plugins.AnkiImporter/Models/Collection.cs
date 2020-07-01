@@ -20,6 +20,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// </summary>
     [Alias("id")]
     public long Id { get; set; }
+
     /// <summary>
     /// creation Date for the Deck
     /// </summary>
@@ -39,12 +40,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [Alias("scm")]
     public long scm { get; set; }
 
-    // TODO
     /// <summary>
     /// Some version number --Not sure what vrson does it represent yet
     /// </summary>
     [Alias("ver")]
-    public int ver { get; set; }
+    public int VersionNumber { get; set; }
     
     /// <summary>
     /// Dirty ie unused, usually set to 0
@@ -58,14 +58,13 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// if -1 any changes to the deck need to be synced or rathter pushed to the server
     /// </summary>
     [Alias("usn")]
-    public int usn { get; set; }
+    public int UpdateSequenceNumber { get; set; }
 
-    // TODO
     /// <summary>
     /// last time the deck was synced at
     /// </summary>
     [Alias("ls")]
-    public int ls { get; set; }
+    public long LastSync { get; set; }
 
     /// <summary>
     /// configuration options for hte deck
