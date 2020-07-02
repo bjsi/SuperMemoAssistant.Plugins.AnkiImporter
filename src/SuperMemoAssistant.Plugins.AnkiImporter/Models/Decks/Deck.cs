@@ -11,8 +11,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
 {
 
   /// <summary>
-  /// Represents an Anki Deck. Used For Seriallizing the theJSON Data
-  /// TODO: Consider 
+  /// Represents an Anki Deck.
   /// </summary>
   public class Deck : INotifyPropertyChanged
   {

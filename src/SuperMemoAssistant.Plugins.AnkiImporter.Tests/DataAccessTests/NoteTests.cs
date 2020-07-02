@@ -50,7 +50,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests
       Assert.Equal("IR/:C=)_g(", note.Guid);
       Assert.Equal(1518831358666, note.NoteTypeId);
       Assert.Equal(1519280080, note.LastModificationTime);
-      Assert.Equal(-1, note.usn);
+      Assert.Equal(-1, note.UpdateSequenceNumber);
       Assert.Equal(" note ", note.Tags);
       Assert.Equal("001 - B5 Treble ClefB5<img src=\"Note-Treble-B5.png\" /><img src=\"KB_B5.png\">[sound:Piano.mf.B5.mp3]", note.FieldString);
       Assert.Equal(1606889653, note.Checksum);

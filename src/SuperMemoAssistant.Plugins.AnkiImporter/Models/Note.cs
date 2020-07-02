@@ -34,12 +34,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [Alias("mod")]
     public long LastModificationTime { get; set; }
 
-    // TODO
     /// <summary>
     /// update sequence number
     /// </summary>
     [Alias("usn")]
-    public int usn { get; set; }
+    public int UpdateSequenceNumber { get; set; }
 
     /// <summary>
     /// tags associated with that card
@@ -66,7 +65,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// </summary>
     [Alias("csum")]
     public long Checksum { get; set; }
-
 
     [Alias("flags")]
     public int Flags { get; set; }

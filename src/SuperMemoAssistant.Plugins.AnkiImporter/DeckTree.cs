@@ -62,6 +62,24 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter
       }
     }
 
+    public List<Card> FilteredCards
+    {
+      get
+      {
+        List<Card> cards = new List<Card>();
+        var trees = this.Filtered;
+        if (trees == null || !trees.Any())
+          return cards;
+
+        foreach (KeyValuePair<string, Deck> tree in trees)
+        {
+          cards.AddRange(tree.Value.AllCards);
+        }
+
+        return cards;
+      }
+    }
+
     /// <summary>
     /// Returns true if an ancestor between the root and the parentName has true for the ToImport property.
     /// </summary>

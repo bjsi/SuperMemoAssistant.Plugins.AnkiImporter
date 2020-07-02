@@ -58,22 +58,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.UI
 
       Cards DataGridCards = (Cards)this.Resources["cards"];
       DataGridCards.Clear();
-      var selectedDecks = Trees.Filtered.Values;
-      if (selectedDecks == null || selectedDecks.Count == 0)
+      List<Card> cards = Trees.FilteredCards;
+      if (cards == null || !cards.Any())
         return;
+      cards.ForEach(c => DataGridCards.Add(c));
 
-      // get selected cards
-      var selectedCards = new List<Card>();
-      foreach (var deck in selectedDecks)
-      {
-        selectedCards.AddRange(deck.AllCards);
-      }
-
-      // Add each selected card to the datagrid collection
-      foreach (var card in selectedCards)
-      {
-        DataGridCards.Add(card);
-      }
     }
 
     /// <summary>

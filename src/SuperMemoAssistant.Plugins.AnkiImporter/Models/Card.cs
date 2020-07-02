@@ -59,7 +59,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     [Alias("mod")]
     public long LastModificationTime { get; set; }
 
-    // TODO
     /// <summary>
     /// update sequence number
     /// -1   = changes need to be synced
@@ -95,7 +94,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
     /// </summary>
     [Alias("due")]
     public int due { get; set; }
-
 
     /// <summary>
     /// interval for Anki's algo
@@ -190,7 +188,17 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
         {
           var renderer = new Renderer(this).Create(TemplateType.Question);
           string question = renderer.Render(Template.QuestionFormat, Note.Fields);
-          _question = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{question}</div></body></html>";
+          _question = $@"
+          <html>
+            <style>
+              {Note.NoteType.CSS.Replace("\n", "").Replace("\r", "")}
+            </style>
+            <body>
+              <div class=""card"">
+                {question}
+              </div>
+            </body>
+          </html>";
         }
 
         return _question;
@@ -209,7 +217,17 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
         {
           var renderer = new Renderer(this).Create(TemplateType.Answer);
           string answer = renderer.Render(Template.AnswerFormat, Note.Fields);
-          _answer = $"<html><style>{Note.NoteType.CSS}</style><body><div class=\"card\">{answer}</div></body></html>";
+          _answer = $@"
+          <html>
+            <style>
+              {Note.NoteType.CSS}
+            </style>
+            <body>
+              <div class=""card"">
+                {answer}
+              </div>
+            </body>
+          </html>";
         }
 
         return _answer;

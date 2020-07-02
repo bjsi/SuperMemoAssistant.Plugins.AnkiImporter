@@ -34,15 +34,16 @@
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition></ColumnDefinition>
+        <ColumnDefinition Width="5"></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
+        <ColumnDefinition Width="5"></ColumnDefinition>
         <ColumnDefinition Width="2*"></ColumnDefinition>
         <ColumnDefinition></ColumnDefinition>
       </Grid.ColumnDefinitions>
 
       <!-- Anki Deck Tree -->
       <TreeView ItemsSource="{Binding Trees.Values}"
-                Name="tv"
-                Margin="5">
+                Name="tv">
         <TreeView.ItemTemplate>
           <HierarchicalDataTemplate ItemsSource="{Binding ChildDecks.Values}">
             <StackPanel Orientation="Horizontal">
@@ -59,12 +60,20 @@
           </HierarchicalDataTemplate>
         </TreeView.ItemTemplate>
       </TreeView>
+      
+      <!-- Grid Splitter 1 -->
+      <GridSplitter Grid.Column="1"
+                  Width="5"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Stretch"
+                  Background="Black"
+                  ShowsPreview="True">
+      </GridSplitter>
 
       <!-- SM KT Preview -->
       <TreeView ItemsSource="{Binding Trees.Filtered.Values}"
                 Name="tv2"
-                Grid.Column="1"
-                Margin="5">
+                Grid.Column="2">
         <TreeView.Resources>
           <Style TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="True" />
@@ -84,12 +93,20 @@
         </TreeView.ItemTemplate>
       </TreeView>
       
+      <!-- Grid Splitter 1 -->
+      <GridSplitter Grid.Column="3"
+                  Width="5"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Stretch"
+                  Background="Black"
+                  ShowsPreview="True">
+      </GridSplitter>
+
     <!-- Anki Grouped Card Datagrid -->
     <DataGrid AutoGenerateColumns="False"
-              Margin="5"
               ItemsSource="{Binding Source={StaticResource cvsCards}}"
               CanUserAddRows="False"
-              Grid.Column="2"
+              Grid.Column="4"
               Name="DG1">
       <DataGrid.GroupStyle>
         <!-- Style for groups at top level. -->

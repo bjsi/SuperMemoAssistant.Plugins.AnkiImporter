@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution files", "_Solutio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{94F5B8FD-2424-4302-95FC-BA8C81181424}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperMemoAssistant.Plugins.AnkiImporter", "src\SuperMemoAssistant.Plugins.AnkiImporter\SuperMemoAssistant.Plugins.AnkiImporter.csproj", "{EFFD4F18-1394-435F-8113-E4B664FACEA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMemoAssistant.Plugins.AnkiImporter", "src\SuperMemoAssistant.Plugins.AnkiImporter\SuperMemoAssistant.Plugins.AnkiImporter.csproj", "{EFFD4F18-1394-435F-8113-E4B664FACEA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9F88C9C3-A20B-4AA6-B83E-E1919CE80E9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperMemoAssistant.Plugins.AnkiImporter.Tests", "src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\SuperMemoAssistant.Plugins.AnkiImporter.Tests.csproj", "{430E49F0-33BE-4920-A476-2DB5234EBB36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperMemoAssistant.Plugins.AnkiImporter.Tests", "src\SuperMemoAssistant.Plugins.AnkiImporter.Tests\SuperMemoAssistant.Plugins.AnkiImporter.Tests.csproj", "{430E49F0-33BE-4920-A476-2DB5234EBB36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

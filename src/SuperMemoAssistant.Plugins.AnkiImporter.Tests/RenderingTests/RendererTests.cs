@@ -36,6 +36,10 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests.RenderingTests
 
     }
 
+
+    // TODO: Gets rendered with a bunch of escaped newlines and tabs which messes up the styling of the html
+    // TODO: Find a better way to test.
+
     [Fact]
     public async void RenderCardQuestionReturnsCorrect()
     {
@@ -85,7 +89,6 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Tests.RenderingTests
 
     }
 
-    // TODO: Gets rendered with a bunch of escaped newlines and tabs which messes up the styling of the html
     [Fact]
     public async void CardAnswerPropertyReturnsRenderedAnswer()
     {
