@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
+using SuperMemoAssistant.Plugins.AnkiImporter.ViewModels;
+using SuperMemoAssistant.Sys.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +15,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
   /// <summary>
   /// Represents an Anki Deck.
   /// </summary>
-  public class Deck : INotifyPropertyChanged
+  public class Deck : BaseViewModel
   {
     [JsonProperty("id")]
     public long Id { get; set; }
@@ -141,7 +143,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
     /// </summary>
     public List<Card> AllCards
     {
-      get=>this.RecursivelyGetCards();
+      get => this.RecursivelyGetCards();
     }
 
     private List<Card> RecursivelyGetCards()
@@ -186,31 +188,8 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks
     }
 
     // For UI
-    /// <summary>
-    /// Notifiy the UI for the changed Deck in Question.
-    /// </summary>
-    private bool _ToImport { get; set; } = false;
-    public bool ToImport
-    {
-      get { return this._ToImport; }
-      set
-      {
-        if (value != this._ToImport)
-        {
-          this._ToImport = value;
-          NotifyPropertyChanged(nameof(ToImport));
-        }
-      }
-    }
+    public bool ToImport { get; set; } = false;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    private void NotifyPropertyChanged(string propertyName)
-    {
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-      }
-    }
   }
   /// <summary>
   /// represents the DeckConfig

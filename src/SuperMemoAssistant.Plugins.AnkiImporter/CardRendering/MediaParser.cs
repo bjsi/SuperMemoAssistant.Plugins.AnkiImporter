@@ -7,21 +7,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
+namespace SuperMemoAssistant.Plugins.AnkiImporter.CardRendering
 {
+
   public static class MediaParser
   {
-
-    // Video is also in the [sound:...] tag
-    private static readonly Regex AudioVideoTagRegex = new Regex(@"(?xs)\[sound: (.*?)\]");
 
     // TODO: incomplete
     private static readonly string[] SupportedImageFormats = new[] { ".jpg", ".png", ".gif", ".bmp", ".jpeg" };
     private static readonly string[] SupportedSoundFormats = new[] { ".wav", ".mp3", ".ogg" };
     private static readonly string[] SupportedVideoFormats = new[] { "" };
-
-    // TODO: Write Tests.
-    // TODO: Existence checks of files.
 
     public static List<string> ParseImages(string contentString)
     {
@@ -51,15 +46,15 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
 
       return relfps;
     }
-    public static List<string> ParseAudioTags(string contentString)
+    public static List<string> ParseAudioTags(string content)
     {
 
       var relfps = new List<string>();
 
-      if (string.IsNullOrEmpty(contentString))
+      if (string.IsNullOrEmpty(content))
         return relfps;
 
-      Match match = AudioVideoTagRegex.Match(contentString);
+      Match match = AnkiRegexes.AudioVideoRegex.Match(content);
       while (match.Success && match.Groups.Count >= 2)
       {
         string fp = match.Groups[1].Value;
@@ -76,6 +71,11 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
       return relfps;
     }
 
+    public static string RemoveAudioTags(string content)
+    {
+      return Regex.Replace(content, AnkiRegexes.AudioVideoPattern, "");
+    }
+
     public static List<string> ParseVideoTags(string contentString)
     {
       var relfps = new List<string>();
@@ -83,7 +83,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
       if (string.IsNullOrEmpty(contentString))
         return relfps;
 
-      Match match = AudioVideoTagRegex.Match(contentString);
+      Match match = AnkiRegexes.AudioVideoRegex.Match(contentString);
       while (match.Success && match.Groups.Count >= 2)
       {
         string filepath = match.Groups[1].Value;
@@ -107,7 +107,7 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
       if (string.IsNullOrEmpty(contentString))
         return string.Empty;
 
-      Match match = AudioVideoTagRegex.Match(contentString);
+      Match match = AnkiRegexes.AudioVideoRegex.Match(contentString);
       int prevIdx = 0;
       while (match.Success && match.Groups.Count >= 2)
       {
@@ -129,13 +129,56 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Rendering
       doc.LoadHtml(contentString);
 
       var imgNodes = doc.DocumentNode.SelectNodes("//img");
-      if (imgNodes == null)
+      if (imgNodes.IsNull() || !imgNodes.Any())
         return contentString;
 
       foreach (var img in imgNodes)
         img.ParentNode.RemoveChild(img);
 
       return doc.DocumentNode.OuterHtml;
+    }
+
+    public static string ConvRelToAbsLink(string baseUrl, string relUrl)
+    {
+      if (!string.IsNullOrEmpty(baseUrl) && !string.IsNullOrEmpty(relUrl))
+      {
+        if (baseUrl.EndsWith("\\"))
+        {
+          baseUrl = baseUrl.TrimEnd('\\');
+        }
+
+        return $"{baseUrl}\\{relUrl}";
+
+      }
+      return relUrl;
+    }
+
+    public static string FixMediaPaths(this string content, string mediaPath)
+    {
+
+      var doc = new HtmlDocument();
+      doc.LoadHtml(content);
+      var imgs = doc.DocumentNode.SelectNodes("//img");
+      if (imgs.IsNull() || !imgs.Any())
+        return content;
+
+      foreach (var img in imgs)
+      {
+
+        string src = img.GetAttributeValue("src", null);
+        if (src.IsNullOrEmpty())
+          continue;
+
+        string abs = ConvRelToAbsLink(mediaPath, src);
+        if (abs.IsNullOrEmpty())
+          continue;
+
+        img.SetAttributeValue("src", abs);
+
+      }
+
+      return doc.DocumentNode.OuterHtml;
+
     }
   }
 }

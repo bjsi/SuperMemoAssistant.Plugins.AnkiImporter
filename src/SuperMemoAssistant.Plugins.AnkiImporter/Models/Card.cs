@@ -1,6 +1,6 @@
 ﻿using ServiceStack.DataAnnotations;
 using SuperMemoAssistant.Plugins.AnkiImporter.Models.Decks;
-using SuperMemoAssistant.Plugins.AnkiImporter.Rendering;
+using SuperMemoAssistant.Plugins.AnkiImporter.CardRendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -171,68 +171,39 @@ namespace SuperMemoAssistant.Plugins.AnkiImporter.Models
       }
     }
 
-    /// <summary>
-    /// Rendering result cached in private field.
-    /// </summary>
-    private string _question { get;  set; }
-
-    /// <summary>
-    /// Renders the question and returns it
-    /// </summary>
-    public string Question
+    // For UI
+    public string QuestionFieldsBrowserPreview
     {
       get
       {
 
-        if (string.IsNullOrEmpty(_question))
-        {
-          var renderer = new Renderer(this).Create(TemplateType.Question);
-          string question = renderer.Render(Template.QuestionFormat, Note.Fields);
-          _question = $@"
-          <html>
-            <style>
-              {Note.NoteType.CSS.Replace("\n", "").Replace("\r", "")}
-            </style>
-            <body>
-              <div class=""card"">
-                {question}
-              </div>
-            </body>
-          </html>";
-        }
+        new CardRenderer(this).Render(TemplateType.Question, out var fieldDict);
+        return UIEx.CreateBrowserPreviewFields(fieldDict);
 
-        return _question;
+      }
+    }
+
+    // For UI
+    public string AnswerFieldsBrowserPreview
+    {
+      get
+      {
+
+        new CardRenderer(this).Render(TemplateType.Answer, out var fieldDict);
+        return UIEx.CreateBrowserPreviewFields(fieldDict);
+
       }
     }
 
     /// <summary>
-    /// Rendering result cached in private field.
+    /// Renders the question and returns it
     /// </summary>
-    private string _answer { get; set; }
-    public string Answer {
-      get
-      {
+    public string Question => new CardRenderer(this).Render(TemplateType.Question, out _);
 
-        if (string.IsNullOrEmpty(_answer))
-        {
-          var renderer = new Renderer(this).Create(TemplateType.Answer);
-          string answer = renderer.Render(Template.AnswerFormat, Note.Fields);
-          _answer = $@"
-          <html>
-            <style>
-              {Note.NoteType.CSS}
-            </style>
-            <body>
-              <div class=""card"">
-                {answer}
-              </div>
-            </body>
-          </html>";
-        }
-
-        return _answer;
-      }
-    }
+    /// <summary>
+    /// Renders the answer and returns it
+    /// </summary>
+    public string Answer => new CardRenderer(this).Render(TemplateType.Answer, out _);
 
     // Relationships
     [Reference]
